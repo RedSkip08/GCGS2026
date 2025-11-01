@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files from "public" folder
+// Serve frontend files
 app.use(express.static(path.join(__dirname, "public")));
 
 // Create uploads folder if it doesn't exist
@@ -33,70 +33,47 @@ app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => 
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   const filePath = req.file ? req.file.path : null;
 
-  if (!filePath) {
-    return res.status(400).send("No file uploaded. Please upload your abstract.");
-  }
+  if (!filePath) return res.status(400).send("No file uploaded.");
 
   try {
-    // Nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Must be App Password
-      },
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
-    // Verify SMTP connection
     await transporter.verify();
-    console.log("SMTP connection successful.");
 
     const mailBody = `
-=== Abstract Submission: GCGS 2026 ===
-
 Name: ${firstName} ${middleName || ""} ${lastName}
 Affiliation: ${affiliation}
-Degree Program / Position: ${degreeProgram}
-
+Degree Program: ${degreeProgram}
 Paper Title: ${paperTitle}
 ${keyword ? `Keywords: ${keyword}` : ""}
-
-Contact Email: ${email}
-
----------------------------
-This abstract was submitted via the GCGS 2026 portal.
+Email: ${email}
 `;
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
-      subject: `GCGS 2026 Abstract Submission: ${paperTitle}`,
+      subject: `GCGS 2026 Abstract: ${paperTitle}`,
       text: mailBody,
-      attachments: [
-        {
-          filename: req.file.originalname,
-          path: filePath,
-        },
-      ],
+      attachments: [{ filename: req.file.originalname, path: filePath }],
     };
 
     await transporter.sendMail(mailOptions);
-    console.log(`Email sent successfully: ${req.file.originalname}`);
 
-    // Delete uploaded file after sending
     fs.unlinkSync(filePath);
-
-    res.redirect("/submissioncomplete/index.html");
+    res.redirect("/submissioncomplete/");
   } catch (err) {
-    console.error("Error sending abstract:", err);
-
-    if (filePath && fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-
-    res.status(500).send("Error submitting abstract. Please try again later.");
+    console.error(err);
+    if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    res.status(500).send("Error submitting abstract.");
   }
 });
 
-// Start server
+// 404 fallback
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
