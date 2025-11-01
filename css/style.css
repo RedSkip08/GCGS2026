@@ -160,13 +160,13 @@ header {
 }
 
 /* =================== NAVIGATION =================== */
-header nav {
+#nav-menu {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-header nav a {
+#nav-menu a {
     text-decoration: none;
     color: #ffffff;
     font-weight: 700;
@@ -176,20 +176,38 @@ header nav a {
     transition: background 0.3s ease;
 }
 
-header nav a:hover,
-header nav a.active {
+#nav-menu a:hover,
+#nav-menu  a.active {
     background-color: #BF5700;
 }
 
-/* =================== MOBILE MENU =================== */
+/* ===== Mobile Header & Navigation Fix ===== */
+/* =================== MOBILE NAVIGATION & HEADER =================== */
 @media (max-width: 768px) {
+
+  /* Header adjustments */
+  header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 1rem 1.5rem;
+  }
+
+  /* Logo scaling */
+  .logo-text {
+    font-size: 1.6rem;
+  }
+  .connection-web {
+    width: 60px;
+  }
+
+  /* Mobile nav menu */
   #nav-menu {
     display: none;
     flex-direction: column;
     width: 100%;
     background: #BF5700;
     position: absolute;
-    top: 100%;  /* directly below header */
+    top: 100%;      /* right below header */
     left: 0;
     z-index: 999;
   }
@@ -200,23 +218,32 @@ header nav a.active {
 
   #nav-menu a {
     padding: 1rem;
-    text-align: center;
     border-radius: 0;
+    text-align: center;
   }
 
+  /* Menu toggle button */
   .menu-toggle {
-    display: flex;  /* shows hamburger */
+    display: flex;
+    cursor: pointer;
+  }
+
+  /* Prevent content hiding behind header */
+  body {
+    padding-top: 110px; /* adjust if header height changes */
   }
 }
 
-
-/* =================== MOBILE LOGO RESPONSIVENESS =================== */
-@media (max-width: 600px) {
-    .logo-text { font-size: 1.5rem; }
-    .connection-web { width: 50px; }
-    header { padding: 0.6rem 1rem; }
-    nav { top: 100%; }
+/* Extra small devices */
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.3rem;
+  }
+  .connection-web {
+    width: 40px;
+  }
 }
+
 
 
 
@@ -383,26 +410,6 @@ footer p {
   font-weight: 500;
   color: #e0e0e0;
   font-size: 0.9rem;
-}
-
-/* Responsive: stack links on small screens */
-@media (max-width: 600px) {
-  .footer-nav {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-    .highlights {
-        flex-direction: column;
-        align-items: center;
-    }
-    nav ul {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
 }
 
 /* ==== About GAGLS ==== */
@@ -770,14 +777,9 @@ main {
 
 /* ======== For Smaller Screens ======== */
 
-@media (max-width: 768px) {
+@media (max-width: 768px) 
 
-  /* Header: better spacing for small screens */
-  header {
-    height: auto;
-    padding: 1rem 1.5rem;
-    flex-wrap: wrap;
-  }
+{
 
   .logo-text {
     font-size: 1.6rem;
@@ -824,16 +826,6 @@ main {
     grid-template-columns: 1fr;
   }
 
-  /* Reduce footer padding */
-  footer {
-    padding: 2rem 1rem;
-  }
-
-  .footer-nav {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
   /* Buttons and explore links full width */
   .explore-buttons a {
     width: 100%;
@@ -867,8 +859,50 @@ main {
   .highlight p {
     font-size: 0.95rem;
   }
+}
 
+/* ===== Footer: Mobile Optimization ===== */
+
+@media (max-width: 600px) {
+
+  /* Reduce footer padding for small screens */
+  footer {
+    padding: 2rem 1rem;
+  }
+
+  /* Stack footer navigation links vertically */
+  .footer-nav {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  /* Make footer links more tappable */
+  .footer-nav a {
+    font-size: 1rem;
+    padding: 0.5rem 0;
+  }
+
+  /* Ensure the top edge wave doesn't overlap content */
+  .footer-top-edge {
+    height: 40px;  
+  }
+
+  /* Footer text scaling */
   footer p {
     font-size: 0.8rem;
+    line-height: 1.4;
   }
 }
+
+/* Extra small screens (≤480px) */
+@media (max-width: 480px) {
+  .footer-nav a {
+    font-size: 0.9rem;
+  }
+
+  footer p {
+    font-size: 0.75rem;
+  }
+}
+
