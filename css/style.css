@@ -648,13 +648,11 @@ button[type="submit"]:hover {
 
 
 /* ===== Mobile adjustments for Footer Logo ===== */
-@media (max-width: 600px) {
-  .footer-logo {
-    position: absolute;   /* keep it where it was */
-    z-index: 999;         /* bring it above nav and text */
-    left: 50%;            /* optional: center it horizontally */
-    transform: translateX(-50%); /* center perfectly */
-  }
+/* Hide footer logo on small screens */
+@media (max-width: 768px) {
+    .footer-logo {
+        display: none;
+    }
 }
 
 
