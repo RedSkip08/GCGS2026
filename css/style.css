@@ -199,68 +199,13 @@ header {
     width: 60px;
   }
 
-  /* Mobile nav menu */
-  #nav-menu {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    background: #BF5700;
-    position: absolute;
-    top: 100%;      /* right below header */
-    left: 0;
-    z-index: 999;
-  }
-
-  #nav-menu.show {
-    display: flex;
-  }
-
-  #nav-menu a {
-    padding: 1rem;
-    border-radius: 0;
-    text-align: center;
-  }
-
-  /* Menu toggle button */
-  .menu-toggle {
-    display: flex;
-    cursor: pointer;
-  }
-
   /* Prevent content hiding behind header */
   body {
     padding-top: 110px; /* adjust if header height changes */
   }
 }
 
-/* Extra small devices */
-@media (max-width: 480px) {
-  .logo-text {
-    font-size: 1.3rem;
-  }
-  .connection-web {
-    width: 40px;
-  }
-}
 
-.menu-toggle {
-    display: none; /* hidden on desktop */
-    font-size: 2rem;      /* size of the icon/text */
-    width: 40px;          /* make it clickable */
-    height: 40px;
-    cursor: pointer;
-    color: white;
-    align-items: center;
-    justify-content: center;
-    z-index: 1001;        /* above header */
-}
-
-/* Show toggle on mobile */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: flex;      /* show on mobile */
-    }
-}
 
 /* ===== Mobile Menu ===== */
 @media (max-width: 768px) {
