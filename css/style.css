@@ -930,3 +930,59 @@ main {
   }
 }
 
+/* ===== Mobile adjustments for Abstract Submission ===== */
+@media (max-width: 700px) {
+
+  /* Make the form one-column */
+  .abstract-submission form {
+    grid-template-columns: 1fr; /* stack all fields */
+    gap: 1rem 0;                /* smaller vertical gap */
+  }
+
+  /* Ensure all inputs, selects, and textareas fill the width */
+  .abstract-submission form input,
+  .abstract-submission form textarea,
+  .abstract-submission form select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Reduce padding on the submission card */
+  .abstract-submission {
+    padding: 1.5rem 1rem;
+  }
+
+  /* Reduce font sizes slightly for small screens */
+  .abstract-submission h1 {
+    font-size: 1.8rem;
+  }
+
+  .abstract-submission p {
+    font-size: 1rem;
+  }
+
+  /* Labels break long words if needed */
+  .abstract-submission label {
+    word-wrap: break-word;
+  }
+
+  /* Checkbox container adjusts to vertical alignment if too cramped */
+  .checkbox-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  /* Submit button full width */
+  .abstract-submission button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  /* Optional: prevent horizontal scrolling */
+  body, html {
+    overflow-x: hidden;
+  }
+}
+
+
