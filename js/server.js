@@ -30,25 +30,27 @@ app.use(express.json());
 
 // Abstract submission route
 app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => {
-  // Destructure form data including optional fields
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   const filePath = req.file ? req.file.path : null;
 
-  try {
-    if (!filePath) {
-      return res.status(400).send("No file uploaded. Please upload your abstract.");
-    }
+  if (!filePath) {
+    return res.status(400).send("No file uploaded. Please upload your abstract.");
+  }
 
+  try {
     // Nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, // must be App Password
       },
     });
 
-    // Email body with optional middle name and keywords
+    // Verify connection before sending
+    await transporter.verify();
+    console.log("SMTP connection successful.");
+
     const mailBody = `
 === Abstract Submission: GCGS 2026 ===
 
@@ -67,7 +69,7 @@ This abstract was submitted via the GCGS 2026 portal.
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER, // your receiving email
+      to: process.env.EMAIL_USER,
       subject: `GCGS 2026 Abstract Submission: ${paperTitle}`,
       text: mailBody,
       attachments: [
@@ -78,19 +80,16 @@ This abstract was submitted via the GCGS 2026 portal.
       ],
     };
 
-    // Send email
     await transporter.sendMail(mailOptions);
+    console.log(`Email sent successfully: ${req.file.originalname}`);
 
     // Delete uploaded file after sending
     fs.unlinkSync(filePath);
 
-    // Redirect to success page
     res.redirect("/submissioncomplete/index.html");
-
   } catch (err) {
     console.error("Error sending abstract:", err);
 
-    // Delete uploaded file if it exists, even on error
     if (filePath && fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
