@@ -650,23 +650,13 @@ button[type="submit"]:hover {
 /* ===== Mobile adjustments for Footer Logo ===== */
 @media (max-width: 600px) {
   .footer-logo {
-    position: relative;   /* take it out of absolute stacking context */
-    z-index: 10;          /* bring it on top of nav and text */
-    margin-bottom: 1rem;  /* add spacing so it doesn’t overlap */
-    display: flex;
-    justify-content: center;
-  }
-
-  .footer-logo img,
-  .footer-logo .logo-img {
-    max-width: 120px;     /* scale down for mobile */
-    height: auto;
-  }
-
-  .footer-nav {
-    margin-top: 1rem;     /* ensure nav moves below logo */
+    position: absolute;   /* keep it where it was */
+    z-index: 999;         /* bring it above nav and text */
+    left: 50%;            /* optional: center it horizontally */
+    transform: translateX(-50%); /* center perfectly */
   }
 }
+
 
 
 
