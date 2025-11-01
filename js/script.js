@@ -2,14 +2,15 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // ===== Mobile Menu Toggle =====
-  const toggle = document.querySelector(".menu-toggle");
-  const nav = document.querySelector("nav-menu");
+  
+    // Select the menu toggle button and the nav menu
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
 
-  if (toggle && nav) {
-    toggle.addEventListener("click", () => {
-      nav.classList.toggle("show");
-    });
-  }
+  // Add click listener
+  menuToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('show');
+  });
 
   // ===== Highlight Active Page in Navigation =====
   const navLinks = document.querySelectorAll("nav-menu a");

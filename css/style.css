@@ -181,7 +181,6 @@ header {
     background-color: #BF5700;
 }
 
-/* ===== Mobile Header & Navigation Fix ===== */
 /* =================== MOBILE NAVIGATION & HEADER =================== */
 @media (max-width: 768px) {
 
@@ -243,6 +242,26 @@ header {
     width: 40px;
   }
 }
+
+.menu-toggle {
+    display: none; /* hidden on desktop */
+    font-size: 2rem;      /* size of the icon/text */
+    width: 40px;          /* make it clickable */
+    height: 40px;
+    cursor: pointer;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;        /* above header */
+}
+
+/* Show toggle on mobile */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;      /* show on mobile */
+    }
+}
+
 
 
 
