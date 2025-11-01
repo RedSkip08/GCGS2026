@@ -85,7 +85,7 @@ This abstract was submitted via the GCGS 2026 portal.
     fs.unlinkSync(filePath);
 
     // Redirect to success page
-    res.redirect("/submission-success.html");
+    res.redirect("/submissioncomplete/index.html");
 
   } catch (err) {
     console.error("Error sending abstract:", err);

@@ -3,45 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conference Home</title>
-<link rel="stylesheet" href="css/style.css">
-<script src="js/script.js" defer></script>
+<title>Submit Abstract</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/script.js" defer></script>
 </head>
 <body>
 
-  <!-- dot cluster -->
-  <div class="dot orange" style="top:90px; left:40px; width:28px; height:28px;"></div>
-  <div class="dot blue" style="top:105px; left:85px; width:22px; height:22px;"></div>
-  <div class="dot orange" style="top:125px; left:65px; width:20px; height:20px;"></div>
-  <div class="dot blue" style="top:145px; left:110px; width:26px; height:26px;"></div>
-  <div class="dot orange" style="top:100px; left:120px; width:24px; height:24px;"></div>
-  <div class="dot blue" style="top:135px; left:135px; width:28px; height:28px;"></div>
-  <div class="dot orange" style="top:160px; left:50px; width:18px; height:18px;"></div>
-
-
-
 <header>
+
   <!-- Logo Home link -->
-  <div class="logo">
-    <a href="index.html">GCGS 2026</a>
-  </div>
+<a href="../home" class="logo-link">
 
-  <!-- Menu for Mobile -->
-  <div class="menu-toggle">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+    <div class="logo-bg">
+    
+      <div class="logo">
+        <!-- Connection web SVG -->
+        <svg class="connection-web" width="50" height="auto" viewBox="0 0 95 80">
+          <!-- Connections -->
+          <line class="line line1" x1="20" y1="10" x2="60" y2="15"/>
+          <line class="line line2" x1="20" y1="10" x2="30" y2="50"/>
+          <line class="line line3" x1="30" y1="50" x2="60" y2="15"/>
+          <line class="line line4" x1="60" y1="15" x2="90" y2="20"/>
+          <line class="line line5" x1="30" y1="50" x2="50" y2="65"/>
+          <line class="line line6" x1="50" y1="65" x2="80" y2="55"/>
+          <line class="line line7" x1="90" y1="20" x2="80" y2="55"/>
+          <line class="line line8" x1="20" y1="10" x2="50" y2="65"/>
+          <line class="line line9" x1="60" y1="15" x2="80" y2="55"/>
+          <line class="line line10" x1="30" y1="50" x2="90" y2="20"/>
 
-  <!-- Navigation -->
-  <nav>
-    <a href="gcgs.html">About GCGS</a>
-    <a href="call-for-papers.html">Call for Papers</a>
-    <a href="abstract-submission.html">Abstracts Submission</a>
-    <a href="schedule.html">Schedule</a>
-    <a href="keynote.html">Keynote Speaker</a>
-    <a href="venue.html">Venue</a>
-  </nav>
+          <!-- Nodes -->
+          <circle class="node node1" cx="20" cy="10" r="2.5"/>
+          <circle class="node node2" cx="30" cy="50" r="2.5"/>
+          <circle class="node node3" cx="50" cy="65" r="2.5"/>
+          <circle class="node node4" cx="60" cy="15" r="2.5"/>
+          <circle class="node node5" cx="80" cy="55" r="2.5"/>
+          <circle class="node node6" cx="90" cy="20" r="2.5"/>
+        </svg>
+
+        <!-- Logo text -->
+        <span class="logo-text">GCGS 2026</span>
+      </div>
+    </div>
+  </a>
+
+
+<!-- Menu for Mobile -->
+<div class="menu-toggle" id="menu-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<!-- Navigation -->
+<nav id="nav-menu">
+  <a href="../gcgs">About GCGS</a>
+  <a href="../cfp">Call for Papers</a>
+  <a href="../abstractsubmission">Abstracts Submission</a>
+  <a href="../schedule">Schedule</a>
+  <a href="../keynote">Keynote Speaker</a>
+  <a href="../registration">Registration</a>
+</nav>
   
 </header>
 
@@ -129,8 +150,8 @@
 
     <!-- Logo/GAGLS link -->
   <div class="footer-logo">
-    <a href="about-gagls.html">
-      <img src="images/gagls.png" alt="GAGLS" class="logo-img">
+    <a href="../aboutgagls">
+      <img src="../images/gagls.png" alt="GAGLS" class="logo-img">
     </a>
   </div>
 
