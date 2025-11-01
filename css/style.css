@@ -646,6 +646,20 @@ button[type="submit"]:hover {
   transform: scale(1.05);
 }
 
+@media (max-width: 768px) {
+  .footer-logo {
+    position: relative; 
+    left: auto;
+    top: auto;
+    bottom: auto;
+    margin-bottom: 1rem;  
+    justify-content: center;
+    height: auto;
+    z-index: auto;
+  }
+}
+
+
 .home-news {
   padding: 4rem 2rem;
   background-color: #f5f5f5;  
