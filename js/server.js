@@ -8,10 +8,10 @@ const fs = require("fs");
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Serve static files
-app.use(express.static(__dirname));
+// Serve static files from "public" folder
+app.use(express.static(path.join(__dirname, "public")));
 
 // Create uploads folder if it doesn't exist
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
@@ -43,11 +43,11 @@ app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => 
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // must be App Password
+        pass: process.env.EMAIL_PASS, // Must be App Password
       },
     });
 
-    // Verify connection before sending
+    // Verify SMTP connection
     await transporter.verify();
     console.log("SMTP connection successful.");
 
@@ -99,4 +99,4 @@ This abstract was submitted via the GCGS 2026 portal.
 });
 
 // Start server
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
