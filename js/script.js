@@ -3,14 +3,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   // ===== Mobile Menu Toggle =====
   
-    // Select the menu toggle button and the nav menu
   const menuToggle = document.getElementById('menu-toggle');
   const navMenu = document.getElementById('nav-menu');
 
-  // Add click listener
-  menuToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('show');
-  });
+  if(menuToggle) {
+    menuToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('show');
+    });
+  }
 
   // ===== Highlight Active Page in Navigation =====
   const navLinks = document.querySelectorAll("nav-menu a");

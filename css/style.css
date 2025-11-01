@@ -262,6 +262,52 @@ header {
     }
 }
 
+/* ===== Mobile Menu ===== */
+@media (max-width: 768px) {
+
+  /* Show the toggle button */
+  .menu-toggle {
+    display: flex;                 /* visible */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 22px;
+    cursor: pointer;
+  }
+
+  .menu-toggle span {
+    display: block;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    width: 100%;
+  }
+
+  /* Hide the nav menu initially */
+  #nav-menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: #BF5700;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+  }
+
+  /* Show menu when active */
+  #nav-menu.show {
+    display: flex;
+  }
+
+  #nav-menu a {
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0;
+  }
+}
+
+
 
 
 
