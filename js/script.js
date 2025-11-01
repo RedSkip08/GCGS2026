@@ -3,7 +3,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // ===== Mobile Menu Toggle =====
   const toggle = document.querySelector(".menu-toggle");
-  const nav = document.querySelector("header nav");
+  const nav = document.querySelector("nav-menu");
 
   if (toggle && nav) {
     toggle.addEventListener("click", () => {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== Highlight Active Page in Navigation =====
-  const navLinks = document.querySelectorAll("header nav a");
+  const navLinks = document.querySelectorAll("nav-menu a");
   let path = window.location.pathname;
 
   // Remove trailing slash
