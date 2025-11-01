@@ -10,10 +10,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve frontend files
+// Serve static files from public/
 app.use(express.static(path.join(__dirname, "public")));
 
-// Create uploads folder if it doesn't exist
+// Create uploads folder if missing
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
 
@@ -28,7 +28,25 @@ const upload = multer({ storage });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Abstract submission route
+// ✅ Serve home page at root
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "home", "index.html"));
+});
+
+// ✅ Serve other pages dynamically (home, gcgs, registration, etc.)
+app.get("/:page", (req, res) => {
+  const page = req.params.page;
+  const pagePath = path.join(__dirname, "public", page, "index.html");
+  console.log("Trying to serve:", pagePath);
+
+  if (fs.existsSync(pagePath)) {
+    res.sendFile(pagePath);
+  } else {
+    res.status(404).send(`Page not found: ${page}`);
+  }
+});
+
+// ✅ Abstract submission route
 app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   const filePath = req.file ? req.file.path : null;
@@ -38,42 +56,41 @@ app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => 
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
     });
 
-    await transporter.verify();
-
     const mailBody = `
+=== Abstract Submission: GCGS 2026 ===
+
 Name: ${firstName} ${middleName || ""} ${lastName}
 Affiliation: ${affiliation}
-Degree Program: ${degreeProgram}
+Degree Program / Position: ${degreeProgram}
 Paper Title: ${paperTitle}
 ${keyword ? `Keywords: ${keyword}` : ""}
-Email: ${email}
+Contact Email: ${email}
 `;
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
-      subject: `GCGS 2026 Abstract: ${paperTitle}`,
+      subject: `GCGS 2026 Abstract Submission: ${paperTitle}`,
       text: mailBody,
       attachments: [{ filename: req.file.originalname, path: filePath }],
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     fs.unlinkSync(filePath);
     res.redirect("/submissioncomplete/");
   } catch (err) {
-    console.error(err);
-    if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    res.status(500).send("Error submitting abstract.");
+    console.error("Error sending abstract:", err);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    res.status(500).send("Error submitting abstract. Please try again later.");
   }
 });
 
-// 404 fallback
-app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
