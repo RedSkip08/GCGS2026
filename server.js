@@ -3,6 +3,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const session = require("express-session");
+const { Resend } = require("resend"); // ✅ Added Resend
+const resend = new Resend('re_bnqStYc5_2FkTfR8Wk5QKcpqdkze9enL4'); // <-- Your API key
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -56,8 +58,8 @@ app.get("/files", (req, res) => {
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
-// --- Handle abstract upload ---
-app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
+// --- Handle abstract upload (updated for Resend email) ---
+app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
 
@@ -80,6 +82,28 @@ Saved as: ${uploadedFileName}
 Submitted On: ${timestamp}
   `.trim();
 
+  // --- Send email with Resend ---
+  try {
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',           // verified sender in Resend
+      to: 'utpalpandey20@gmail.com',          // your email
+      subject: `New Abstract Submission: ${firstName} ${lastName}`,
+      text: metadataContent,
+      attachments: [
+        {
+          name: originalFileName,
+          data: fs.readFileSync(req.file.path),
+        },
+      ],
+    });
+    console.log("✅ Email sent successfully");
+  } catch (err) {
+    console.error("❌ Email failed:", err);
+  }
+
+  // Optionally delete the uploaded file to save space
+  try { fs.unlinkSync(req.file.path); } catch {}
+
   // Save metadata file
   const metadataFileName = `metadata-${Date.now()}.txt`;
   fs.writeFileSync(path.join(UPLOADS_FOLDER, metadataFileName), metadataContent);
@@ -91,7 +115,7 @@ Submitted On: ${timestamp}
     try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
   }
 
-  submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName, originalFile: originalFileName });
+  submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName, originalFile: originalFileName, emailSent: true });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
