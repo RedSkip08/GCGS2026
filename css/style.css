@@ -1099,4 +1099,97 @@ main {
   background-color: #c0392b;
 }
 
+/* --- Mobile-Friendly Adjustments for Submission Success Page --- */
+@media screen and (max-width: 768px) {
+  
+  /* Main success message section */
+  .success-message {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  /* Adjust main thank you heading */
+  .thank-you-main {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  /* Adjust underline */
+  .thank-you-underline {
+    width: 60px;
+    height: 3px;
+    margin: 0.5rem auto;
+  }
+
+  /* Translations: stack vertically and center */
+  .thank-you-translations {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Paragraph text: center and smaller font */
+  .success-message p {
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Explore text */
+  .explore-text {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Buttons container: stack vertically */
+  .explore-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .explore-buttons a {
+    display: inline-block;
+    width: 90%;
+    max-width: 300px;
+    text-align: center;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Logo adjustments */
+  .logo-bg, .logo {
+    display: flex;
+    justify-content: center;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  /* Footer adjustments */
+  .footer-logo img {
+    max-width: 120px;
+    height: auto;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .footer-nav a {
+    font-size: 0.85rem;
+  }
+}
+
+
 
