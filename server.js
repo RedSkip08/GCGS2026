@@ -92,7 +92,12 @@ app.get("/files", (req, res) => {
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
-// --- Handle abstract upload with Resend email ---
+// --- Helper function to sanitize filenames ---
+function sanitizeFilename(filename) {
+  // Replace spaces and unsafe characters with underscores
+  return filename.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+}
+
 app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
@@ -100,7 +105,9 @@ app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => 
   const timestamp = new Date().toISOString();
   const uploadedFileName = req.file.filename;
   const originalFileName = req.file.originalname;
+  const sanitizedFileName = sanitizeFilename(originalFileName);
 
+  // --- Metadata content ---
   const metadataContent = `
 First Name: ${firstName || ""}
 Middle Name: ${middleName || ""}
@@ -115,33 +122,34 @@ Saved as: ${uploadedFileName}
 Submitted On: ${timestamp}
   `.trim();
 
-try {
-  const fileBuffer = fs.readFileSync(req.file.path);
+  try {
+    const fileBuffer = fs.readFileSync(req.file.path);
 
-  await resend.emails.send({
-    from: "abstract@gcgs.info",
-    to: "utpalpandey20@gmail.com",
-    subject: `New Abstract Submission: ${firstName} ${lastName}`,
-    text: metadataContent,
-    attachments: [
-      {
-        name: originalFileName,       // keeps original filename & extension
-        content: fileBuffer,          // pass Buffer directly
-        type: mime.lookup(originalFileName) || "application/octet-stream",
-      },
-    ],
-  });
+    // --- Send email with attachment ---
+    await resend.emails.send({
+      from: "abstract@gcgs.info",
+      to: "utpalpandey20@gmail.com",
+      subject: `New Abstract Submission: ${firstName} ${lastName}`,
+      text: metadataContent,
+      attachments: [
+        {
+          name: sanitizedFileName,   // safe filename for email attachment
+          content: fileBuffer,       // pass Buffer directly
+          type: mime.lookup(originalFileName) || "application/octet-stream",
+        },
+      ],
+    });
 
-  console.log("✅ Email sent successfully");
-} catch (err) {
-  console.error("❌ Email failed:", err);
-}
+    console.log("✅ Email sent successfully");
+  } catch (err) {
+    console.error("❌ Email failed:", err);
+  }
 
-  // Save metadata file
+  // --- Save metadata file ---
   const metadataFileName = `metadata-${Date.now()}.txt`;
   fs.writeFileSync(path.join(UPLOADS_FOLDER, metadataFileName), metadataContent);
 
-  // Save submission record
+  // --- Save submission record ---
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
@@ -155,11 +163,13 @@ try {
   });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
-  // ❌ Remove file deletion here if you want downloads to work
+  // --- Keep uploaded file for download ---
   // try { fs.unlinkSync(req.file.path); } catch {}
 
+  // --- Send submission complete page ---
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
+
 
 
 // --- Login ---
