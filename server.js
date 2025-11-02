@@ -1,24 +1,20 @@
+// server.js
 const express = require("express");
-const path = require("path");
-const fs = require("fs");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
+const path = require("path");
+const fs = require("fs");
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---------------------------
-// Serve static files
-// ---------------------------
-app.use("/css", express.static(path.join(__dirname, "css")));
-app.use("/js", express.static(path.join(__dirname, "js")));
-app.use("/images", express.static(path.join(__dirname, "images")));
+// Serve all static files (CSS, JS, images)
+app.use(express.static(__dirname));
 
-// ---------------------------
-// Ensure uploads folder exists
-// ---------------------------
+// Create uploads folder if it doesn't exist
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
 
@@ -33,37 +29,32 @@ const upload = multer({ storage });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ---------------------------
-// Routes
-// ---------------------------
-
-// Home page
+// Serve root index.html
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html")); // Change to "home/index.html" if you prefer
+  const file = path.join(__dirname, "index.html");
+  if (fs.existsSync(file)) res.sendFile(file);
+  else res.status(404).send("index.html not found");
 });
 
-// Other pages (dynamic routing)
-app.get("/:page", (req, res) => {
-  const pageFolder = req.params.page;
-  const pagePath = path.join(__dirname, pageFolder, "index.html");
-
-  if (fs.existsSync(pagePath)) {
-    res.sendFile(pagePath);
-  } else {
-    res.status(404).send("Page not found");
-  }
+// Serve subfolder HTML files dynamically (like /home, /aboutgagls)
+app.get("/:folder", (req, res) => {
+  const folder = req.params.folder;
+  const file = path.join(__dirname, folder, "index.html");
+  if (fs.existsSync(file)) res.sendFile(file);
+  else res.status(404).send("Page not found");
 });
 
-// ---------------------------
 // Abstract submission route
-// ---------------------------
 app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   const filePath = req.file ? req.file.path : null;
 
-  if (!filePath) return res.status(400).send("No file uploaded.");
-
   try {
+    if (!filePath) {
+      return res.status(400).send("No file uploaded. Please upload your abstract.");
+    }
+
+    // Nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -72,37 +63,56 @@ app.post("/submit-abstract", upload.single("abstractFile"), async (req, res) => 
       },
     });
 
+    // Email body
     const mailBody = `
-=== Abstract Submission ===
+=== Abstract Submission: GCGS 2026 ===
+
 Name: ${firstName} ${middleName || ""} ${lastName}
 Affiliation: ${affiliation}
-Degree Program: ${degreeProgram}
+Degree Program / Position: ${degreeProgram}
+
 Paper Title: ${paperTitle}
 ${keyword ? `Keywords: ${keyword}` : ""}
-Email: ${email}
+
+Contact Email: ${email}
+
+---------------------------
+This abstract was submitted via the GCGS 2026 portal.
 `;
 
-    await transporter.sendMail({
+    const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: `Abstract Submission: ${paperTitle}`,
+      to: process.env.EMAIL_USER, // receiving email
+      subject: `GCGS 2026 Abstract Submission: ${paperTitle}`,
       text: mailBody,
-      attachments: [{ filename: req.file.originalname, path: filePath }],
-    });
+      attachments: [
+        {
+          filename: req.file.originalname,
+          path: filePath,
+        },
+      ],
+    };
 
-    // Delete file after sending
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    // Delete uploaded file after sending
     fs.unlinkSync(filePath);
 
-    // Redirect to submission complete page
-    res.redirect("/submissioncomplete"); // Assumes folder submissioncomplete/index.html exists
+    // Redirect to submission success page
+    res.redirect("/submissioncomplete");
+
   } catch (err) {
-    console.error(err);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    res.status(500).send("Error submitting abstract.");
+    console.error("Error sending abstract:", err);
+
+    // Delete uploaded file if exists
+    if (filePath && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    res.status(500).send("Error submitting abstract. Please try again later.");
   }
 });
 
-// ---------------------------
 // Start server
-// ---------------------------
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
