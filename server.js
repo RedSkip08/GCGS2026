@@ -123,8 +123,8 @@ Submitted On: ${timestamp}
       text: metadataContent,
       attachments: [
         {
-          name: originalFileName,
-          path: req.file.path, // ✅ Resend will read from file path
+          name: req.file.originalname,            // The file name in the email
+          content: fs.readFileSync(req.file.path)
         },
       ],
 
