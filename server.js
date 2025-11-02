@@ -15,6 +15,10 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
 
+// ✅ Make uploads folder downloadable
+app.use('/uploads', express.static('uploads'));
+
+
 // Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_FOLDER),
