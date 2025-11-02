@@ -124,7 +124,7 @@ Submitted On: ${timestamp}
       attachments: [
         {
           name: originalFileName,
-          data: fs.readFileSync(req.file.path),
+          content: fs.readFileSync(req.file.path),
         },
       ],
     });
