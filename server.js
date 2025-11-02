@@ -6,7 +6,7 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static assets only
+// Serve static assets
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
@@ -15,9 +15,8 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
 
-// ✅ Make uploads folder downloadable
-app.use('/uploads', express.static('uploads'));
-
+// Make uploads folder downloadable
+app.use('/uploads', express.static(UPLOADS_FOLDER));
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -91,7 +90,7 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
 
-// Serve root page if needed
+// Serve root page
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
 // Dynamic folder serving (optional)
@@ -100,6 +99,23 @@ app.get("/:folder", (req, res) => {
   const filePath = path.join(__dirname, folder, "index.html");
   if (fs.existsSync(filePath)) res.sendFile(filePath);
   else res.status(404).send("Page not found");
+});
+
+// ✅ Password-protected files listing
+const FILES_PASSWORD = "mypassword"; // CHANGE this to a strong password
+app.get("/files", (req, res) => {
+  const password = req.query.password;
+  if (password !== FILES_PASSWORD) {
+    return res.status(401).send("Unauthorized: wrong password");
+  }
+
+  const files = fs.readdirSync(UPLOADS_FOLDER);
+  let html = '<h1>Uploaded Files</h1><ul>';
+  files.forEach(file => {
+    html += `<li><a href="/uploads/${file}" download>${file}</a></li>`;
+  });
+  html += '</ul>';
+  res.send(html);
 });
 
 // Start server
