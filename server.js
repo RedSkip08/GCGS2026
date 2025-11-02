@@ -1,3 +1,8 @@
+// Load environment variables in local development
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 // server.js
 const express = require("express");
 const multer = require("multer");
@@ -6,10 +11,6 @@ const fs = require("fs");
 const session = require("express-session");
 const { Resend } = require("resend");
 
-// Load environment variables in local development
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
 
 // Initialize Resend with API key from env
 const resend = new Resend(process.env.RESEND_API_KEY);
