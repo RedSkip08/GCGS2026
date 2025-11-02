@@ -13,7 +13,10 @@ const { Resend } = require("resend");
 
 // ⚠️ Temporary: Hardcode your Resend API key for testing
 const resend = new Resend("re_bnqStYc5_2FkTfR8Wk5QKcpqdkze9enL4"); // <-- replace with your actual key
+const SESSION_SECRET = "***REMOVED***";
+
 console.log("✅ Using hardcoded Resend API key for test");
+console.log("✅ Using hardcoded session secret for test");
 
 // Optional: check if environment variable is loaded (for future switch)
 console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded" : "Missing");
