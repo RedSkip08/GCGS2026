@@ -318,7 +318,7 @@ main {
 /* Intro */
 .intro {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 }
 .intro h2 {
     font-size: 2rem;
@@ -335,26 +335,39 @@ main {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1rem;
 }
 .highlight {
-    flex: 1 1 calc(33% - 2rem);
+    flex: 1 1 calc(33% - 1.5rem);
     background-color: #f8f8f8;
-    padding: 2rem;
+    padding: 0.8rem;
     border-radius: 12px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #3498db;
 }
 .highlight:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    border-color: #e67e22;
 }
 .highlight h3 {
+    margin-top: 0.2;
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
+    border-bottom: 3px solid transparent;
+
+    display: inline-block;          
+    border-bottom: 1px solid #BF5700; 
+    padding-bottom: 0.25rem;
 }
+.highlight:hover h3 {
+    border-color: #013c57; 
+}
+
 .highlight p {
     color: #555;
+    margin: 0.25rem 0;
 }
 
 /* Responsive */
@@ -1203,6 +1216,57 @@ main {
 .menu-toggle.open span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
+
+.cfp .hero h1 {
+    font-size: 2rem; 
+    line-height: 1.2;
+}
+
+#hero-heading {
+    font-size: 2.2rem;
+    line-height: 1.2;
+}
+
+
+.conference-details {
+    margin-top: -2rem; /* pull upward slightly */
+}
+
+.hero {
+    padding-bottom: 1.5rem; /* adjust as needed */
+}
+
+.cfp .deadline {
+    font-weight: bold;
+    color: red; /* or #c00 */
+}
+
+.topics-heading {
+    margin: 0;        /* remove extra spacing */
+    padding: 0; /* optional spacing */
+}
+
+.conference-details h3 {
+  margin-bottom: 0.3rem;
+  font-size: 1.8rem;     
+  font-weight: 600; 
+}
+
+.conference-details p {
+  margin: 0.2rem 0;
+  line-height: 1.4;     
+}
+
+.conference-details .highlight-text {
+  color: #BF5700;
+  font-size: 2rem; 
+}
+
+
+
+
+
+
 
 
 
