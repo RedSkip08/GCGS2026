@@ -14,10 +14,14 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Session setup
 app.use(session({
-  secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$", // strong secret
+  secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$",
   resave: false,
   saveUninitialized: false
 }));
+
+// Parse form data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Ensure uploads folder exists
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
@@ -33,13 +37,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Parse form data
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
 // Login credentials
-const LOGIN_USERNAME = "worker";      
-const LOGIN_PASSWORD = "mypassword";  
+const LOGIN_USERNAME = "worker";
+const LOGIN_PASSWORD = "mypassword";
+
+// -------------------- ROUTES --------------------
 
 // Serve static HTML pages
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
@@ -50,11 +52,13 @@ app.get("/abstractsubmission", (req, res) =>
 app.get("/submissioncomplete", (req, res) =>
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"))
 );
+
+// Files page (requires login)
 app.get("/files", (req, res) => {
   if (!req.session.loggedIn) {
-    return res.status(401).send("Unauthorized. Please <a href='/login'>login</a>.");
+    return res.redirect("/login");
   }
-  res.sendFile(path.join(__dirname, "files", "index.html")); // your HTML page for files
+  res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
 // Handle abstract uploads
@@ -91,6 +95,7 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
       submissions = [];
     }
   }
+
   submissions.push(submissionData);
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
@@ -116,7 +121,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// API endpoint to get submissions data (JSON)
+// API endpoint to get submissions data
 app.get("/api/submissions", (req, res) => {
   if (!req.session.loggedIn) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -136,7 +141,7 @@ app.get("/api/submissions", (req, res) => {
   res.json(submissions);
 });
 
-// Dynamic folder serving (optional)
+// Optional dynamic folder serving
 app.get("/:folder", (req, res) => {
   const folder = req.params.folder;
   const filePath = path.join(__dirname, folder, "index.html");
