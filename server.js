@@ -7,41 +7,41 @@ const session = require("express-session");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static assets
+// ----- Serve static assets -----
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// Session setup
+// ----- Session setup -----
+app.set('trust proxy', 1); // Required if behind a proxy like Render
 app.use(session({
   secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$",
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { secure: true } // must be true for HTTPS on Render
 }));
 
-// Parse form data
+// ----- Parse form data -----
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Ensure uploads folder exists
+// ----- Ensure uploads folder exists -----
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
+app.use('/uploads', express.static(UPLOADS_FOLDER)); // downloadable
 
-// Make uploads folder downloadable
-app.use('/uploads', express.static(UPLOADS_FOLDER));
-
-// Multer setup for file uploads
+// ----- Multer setup for file uploads -----
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_FOLDER),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
 
-// Login credentials
+// ----- Login credentials -----
 const LOGIN_USERNAME = "worker";
 const LOGIN_PASSWORD = "mypassword";
 
-// -------------------- ROUTES --------------------
+// ----- Routes -----
 
 // Serve static HTML pages
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
@@ -55,9 +55,7 @@ app.get("/submissioncomplete", (req, res) =>
 
 // Files page (requires login)
 app.get("/files", (req, res) => {
-  if (!req.session.loggedIn) {
-    return res.redirect("/login");
-  }
+  if (!req.session.loggedIn) return res.redirect("/login");
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
@@ -68,7 +66,6 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
   console.log("Uploaded file:", req.file);
 
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
-
   if (!req.file) return res.status(400).send("No file uploaded.");
 
   const submissionData = {
@@ -105,7 +102,6 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
 // Handle login submission
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
-
   if (username === LOGIN_USERNAME && password === LOGIN_PASSWORD) {
     req.session.loggedIn = true;
     res.redirect("/files");
@@ -123,9 +119,7 @@ app.get("/logout", (req, res) => {
 
 // API endpoint to get submissions data
 app.get("/api/submissions", (req, res) => {
-  if (!req.session.loggedIn) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  if (!req.session.loggedIn) return res.status(401).json({ error: "Unauthorized" });
 
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
@@ -149,5 +143,5 @@ app.get("/:folder", (req, res) => {
   else res.status(404).send("Page not found");
 });
 
-// Start server
+// ----- Start server -----
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
