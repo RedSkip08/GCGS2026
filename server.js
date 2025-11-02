@@ -7,13 +7,13 @@ const session = require("express-session");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ----- Serve static assets -----
+// --- Serve static assets ---
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// ----- Session setup -----
-app.set('trust proxy', 1); // Required if behind a proxy like Render
+// --- Session setup ---
+app.set('trust proxy', 1); // for Render HTTPS
 app.use(session({
   secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$",
   resave: false,
@@ -21,37 +21,33 @@ app.use(session({
   cookie: { secure: true } // must be true for HTTPS on Render
 }));
 
-// ----- Parse form data -----
+// --- Parse form data ---
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ----- Ensure uploads folder exists -----
+// --- Ensure uploads folder exists ---
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
-app.use('/uploads', express.static(UPLOADS_FOLDER)); // downloadable
+app.use('/uploads', express.static(UPLOADS_FOLDER));
 
-// ----- Multer setup for file uploads -----
+// --- Multer setup ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_FOLDER),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
 
-// ----- Login credentials -----
+// --- Login credentials ---
 const LOGIN_USERNAME = "worker";
 const LOGIN_PASSWORD = "mypassword";
 
-// ----- Routes -----
+// --- Routes ---
 
-// Serve static HTML pages
+// Serve HTML pages
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
-app.get("/abstractsubmission", (req, res) =>
-  res.sendFile(path.join(__dirname, "abstractsubmission", "index.html"))
-);
-app.get("/submissioncomplete", (req, res) =>
-  res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"))
-);
+app.get("/abstractsubmission", (req, res) => res.sendFile(path.join(__dirname, "abstractsubmission", "index.html")));
+app.get("/submissioncomplete", (req, res) => res.sendFile(path.join(__dirname, "submissioncomplete", "index.html")));
 
 // Files page (requires login)
 app.get("/files", (req, res) => {
@@ -59,12 +55,8 @@ app.get("/files", (req, res) => {
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
-// Handle abstract uploads
+// Handle uploads
 app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
-  console.log("POST /upload-abstract triggered");
-  console.log("Form fields:", req.body);
-  console.log("Uploaded file:", req.file);
-
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
 
@@ -78,7 +70,7 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
     paperTitle,
     keyword: keyword || "",
     email,
-    fileName: req.file.filename,
+    fileName: req.file.filename
   };
 
   const submissionsFile = path.join(__dirname, "submissions.json");
@@ -87,19 +79,17 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
     try {
       submissions = JSON.parse(fs.readFileSync(submissionsFile));
       if (!Array.isArray(submissions)) submissions = [];
-    } catch (err) {
-      console.error("Error reading submissions.json, resetting file.", err);
+    } catch {
       submissions = [];
     }
   }
-
   submissions.push(submissionData);
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
 
-// Handle login submission
+// Handle login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === LOGIN_USERNAME && password === LOGIN_PASSWORD) {
@@ -110,14 +100,12 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Logout route
+// Logout
 app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/login");
-  });
+  req.session.destroy(() => res.redirect("/login"));
 });
 
-// API endpoint to get submissions data
+// API to get submissions
 app.get("/api/submissions", (req, res) => {
   if (!req.session.loggedIn) return res.status(401).json({ error: "Unauthorized" });
 
@@ -126,8 +114,7 @@ app.get("/api/submissions", (req, res) => {
   if (fs.existsSync(submissionsFile)) {
     try {
       submissions = JSON.parse(fs.readFileSync(submissionsFile));
-    } catch (err) {
-      console.error("Error reading submissions.json:", err);
+    } catch {
       submissions = [];
     }
   }
@@ -143,5 +130,5 @@ app.get("/:folder", (req, res) => {
   else res.status(404).send("Page not found");
 });
 
-// ----- Start server -----
+// --- Start server ---
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
