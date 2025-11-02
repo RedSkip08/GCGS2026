@@ -12,7 +12,7 @@ const session = require("express-session");
 const { Resend } = require("resend");
 
 // ⚠️ Temporary: Hardcode your Resend API key for testing
-const resend = new Resend("re_bnqStYc5_2FkTfR8Wk5QKcpqdkze9enL4"); // <-- replace with your actual key
+const resend = new Resend("***REMOVED***"); // <-- replace with your actual key
 
 // ⚠️ Hardcoded session secret for testing
 const SESSION_SECRET = "***REMOVED***";
