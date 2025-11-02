@@ -12,16 +12,16 @@ app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// --- Session setup (works on Render HTTPS) ---
-app.set('trust proxy', 1); // required if behind HTTPS proxy
+// --- Session setup ---
+app.set('trust proxy', 1); // required for HTTPS proxies
 app.use(session({
   secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$",
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: true, // required for HTTPS
+    secure: false, // false for local testing, change to true on Render HTTPS
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
+    maxAge: 1000 * 60 * 60 * 24
   }
 }));
 
@@ -32,7 +32,6 @@ app.use(express.json());
 // --- Ensure uploads folder exists ---
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
-app.use('/uploads', express.static(UPLOADS_FOLDER));
 
 // --- Multer setup ---
 const storage = multer.diskStorage({
@@ -45,21 +44,17 @@ const upload = multer({ storage });
 const LOGIN_USERNAME = "***REMOVED***";
 const LOGIN_PASSWORD = "***REMOVED***";
 
-// --- Routes ---
-
-// Serve HTML pages
+// --- HTML routes ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
 app.get("/abstractsubmission", (req, res) => res.sendFile(path.join(__dirname, "abstractsubmission", "index.html")));
 app.get("/submissioncomplete", (req, res) => res.sendFile(path.join(__dirname, "submissioncomplete", "index.html")));
-
-// Files page (requires login)
 app.get("/files", (req, res) => {
   if (!req.session.loggedIn) return res.redirect("/login");
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
-// --- Handle uploads with metadata ---
+// --- Handle abstract upload ---
 app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
@@ -85,34 +80,22 @@ Submitted On: ${timestamp}
 
   // Save metadata file
   const metadataFileName = `metadata-${Date.now()}.txt`;
-  const metadataPath = path.join(UPLOADS_FOLDER, metadataFileName);
-  fs.writeFileSync(metadataPath, metadataContent);
+  fs.writeFileSync(path.join(UPLOADS_FOLDER, metadataFileName), metadataContent);
 
-  // Save submission record in submissions.json
+  // Save submission record
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
-    try {
-      submissions = JSON.parse(fs.readFileSync(submissionsFile));
-      if (!Array.isArray(submissions)) submissions = [];
-    } catch {
-      submissions = [];
-    }
+    try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
   }
 
-  submissions.push({
-    timestamp,
-    metadataFile: metadataFileName,
-    uploadedFile: uploadedFileName,
-    originalFile: originalFileName
-  });
-
+  submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
 
-// --- Handle login ---
+// --- Login ---
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === LOGIN_USERNAME && password === LOGIN_PASSWORD) {
@@ -131,26 +114,27 @@ app.get("/logout", (req, res) => {
 // --- API to get submissions ---
 app.get("/api/submissions", (req, res) => {
   if (!req.session.loggedIn) return res.status(401).json({ error: "Unauthorized" });
-
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
-    try {
-      submissions = JSON.parse(fs.readFileSync(submissionsFile));
-    } catch {
-      submissions = [];
-    }
+    try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
   }
-
   res.json(submissions);
 });
 
-// --- Optional dynamic folder serving ---
-app.get("/:folder", (req, res) => {
-  const folder = req.params.folder;
-  const filePath = path.join(__dirname, folder, "index.html");
-  if (fs.existsSync(filePath)) res.sendFile(filePath);
-  else res.status(404).send("Page not found");
+// --- Secure download routes ---
+app.get("/metadata/:file", (req, res) => {
+  if (!req.session.loggedIn) return res.status(401).send("Unauthorized");
+  const filePath = path.join(UPLOADS_FOLDER, req.params.file);
+  if (fs.existsSync(filePath)) res.download(filePath);
+  else res.status(404).send("File not found");
+});
+
+app.get("/download/:file", (req, res) => {
+  if (!req.session.loggedIn) return res.status(401).send("Unauthorized");
+  const filePath = path.join(UPLOADS_FOLDER, req.params.file);
+  if (fs.existsSync(filePath)) res.download(filePath);
+  else res.status(404).send("File not found");
 });
 
 // --- Start server ---

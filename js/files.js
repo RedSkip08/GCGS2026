@@ -1,44 +1,37 @@
-// files.js
-document.addEventListener("DOMContentLoaded", () => {
-  const tableBody = document.getElementById("files-list");
+document.addEventListener("DOMContentLoaded", async () => {
+  const tbody = document.getElementById("files-list");
 
-  fetch("/api/submissions")
-    .then(res => {
-      if (!res.ok) throw new Error("Unauthorized or server error");
-      return res.json();
-    })
-    .then(submissions => {
-      if (!submissions.length) {
-        tableBody.innerHTML = `<tr><td colspan="2">No submissions yet.</td></tr>`;
-        return;
-      }
+  try {
+    const res = await fetch("/api/submissions");
+    if (!res.ok) throw new Error("Failed to fetch submissions");
 
-      submissions.forEach(sub => {
-        const tr = document.createElement("tr");
+    const submissions = await res.json();
 
-        // Metadata column
-        const metadataTd = document.createElement("td");
-        const metadataLink = document.createElement("a");
-        metadataLink.href = `/uploads/${sub.metadataFile}`;
-        metadataLink.textContent = "View Metadata";
-        metadataLink.target = "_blank";
-        metadataTd.appendChild(metadataLink);
+    submissions.forEach(sub => {
+      const tr = document.createElement("tr");
 
-        // File column
-        const fileTd = document.createElement("td");
-        const fileLink = document.createElement("a");
-        fileLink.href = `/uploads/${sub.uploadedFile}`;
-        fileLink.textContent = sub.originalFile || "Download File";
-        fileLink.target = "_blank";
-        fileTd.appendChild(fileLink);
+      // Metadata column
+      const metadataTd = document.createElement("td");
+      const metadataLink = document.createElement("a");
+      metadataLink.href = `/metadata/${sub.metadataFile}`;
+      metadataLink.textContent = "Download Metadata";
+      metadataLink.target = "_blank";
+      metadataTd.appendChild(metadataLink);
 
-        tr.appendChild(metadataTd);
-        tr.appendChild(fileTd);
-        tableBody.appendChild(tr);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      tableBody.innerHTML = `<tr><td colspan="2">Failed to load submissions.</td></tr>`;
+      // Uploaded file column
+      const fileTd = document.createElement("td");
+      const uploadedLink = document.createElement("a");
+      uploadedLink.href = `/download/${sub.uploadedFile}`;
+      uploadedLink.textContent = "Download File";
+      uploadedLink.target = "_blank";
+      fileTd.appendChild(uploadedLink);
+
+      tr.appendChild(metadataTd);
+      tr.appendChild(fileTd);
+      tbody.appendChild(tr);
     });
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="2">Failed to load submissions</td></tr>`;
+  }
 });
