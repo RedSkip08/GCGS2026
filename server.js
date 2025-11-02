@@ -134,5 +134,11 @@ app.get("/:folder", (req, res) => {
   else res.status(404).send("Page not found");
 });
 
+// logout
+app.get("/logout", (req, res) => {
+  req.session.destroy(() => res.redirect("/login"));
+});
+
+
 // --- Start server ---
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
