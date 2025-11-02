@@ -101,7 +101,6 @@ app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => 
   const uploadedFileName = req.file.filename;
   const originalFileName = req.file.originalname;
 
-  // Create metadata content
   const metadataContent = `
 First Name: ${firstName || ""}
 Middle Name: ${middleName || ""}
@@ -116,22 +115,23 @@ Saved as: ${uploadedFileName}
 Submitted On: ${timestamp}
   `.trim();
 
-  // --- Send email with Resend ---
   try {
+    const fileBuffer = fs.readFileSync(req.file.path);
+
     await resend.emails.send({
-      from: "abstract@gcgs.info", // verified sender in Resend
-      to: "utpalpandey20@gmail.com", // your recipients
+      from: "abstract@gcgs.info",
+      to: "utpalpandey20@gmail.com",
       subject: `New Abstract Submission: ${firstName} ${lastName}`,
       text: metadataContent,
       attachments: [
         {
-          name: req.file.originalname,
-          content: fileBuffer.toString("base64"), // Resend prefers base64
-          type: mime.lookup(req.file.originalname) || "application/octet-stream",
+          name: originalFileName,
+          content: fileBuffer.toString("base64"), // important
+          type: mime.lookup(originalFileName) || "application/octet-stream",
         },
       ],
-
     });
+
     console.log("✅ Email sent successfully");
   } catch (err) {
     console.error("❌ Email failed:", err);
@@ -145,11 +145,7 @@ Submitted On: ${timestamp}
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
-    try {
-      submissions = JSON.parse(fs.readFileSync(submissionsFile));
-    } catch {
-      submissions = [];
-    }
+    try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
   }
   submissions.push({
     metadataFile: metadataFileName,
@@ -159,11 +155,12 @@ Submitted On: ${timestamp}
   });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
-  // Optionally delete uploaded file to save space
-  try { fs.unlinkSync(req.file.path); } catch {}
+  // ❌ Remove file deletion here if you want downloads to work
+  // try { fs.unlinkSync(req.file.path); } catch {}
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
+
 
 // --- Login ---
 app.post("/login", (req, res) => {
