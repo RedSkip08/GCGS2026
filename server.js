@@ -118,5 +118,26 @@ app.get("/files", (req, res) => {
   res.send(html);
 });
 
+// ✅ Login page
+const LOGIN_USERNAME = "worker";      // change this if needed
+const LOGIN_PASSWORD = "mypassword";  // can be same as FILES_PASSWORD
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "login", "index.html"));
+});
+
+// Handle login submission
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === LOGIN_USERNAME && password === LOGIN_PASSWORD) {
+    // Login successful → redirect to files page
+    res.redirect(`/files?password=${FILES_PASSWORD}`);
+  } else {
+    // Login failed → show message
+    res.status(401).send("Invalid username or password. <a href='/login'>Try again</a>");
+  }
+});
+
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
