@@ -11,15 +11,16 @@ const fs = require("fs");
 const session = require("express-session");
 const { Resend } = require("resend");
 
-// Initialize Resend with environment variable
-const resend = new Resend(process.env.RESEND_API_KEY);
+// ⚠️ Temporary: Hardcode your Resend API key for testing
+const resend = new Resend("re_bnqStYc5_2FkTfR8Wk5QKcpqdkze9enL4"); // <-- replace with your actual key
+console.log("✅ Using hardcoded Resend API key for test");
 
-// Optional: check if key is loaded
+// Optional: check if environment variable is loaded (for future switch)
 console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded" : "Missing");
-
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 
 // --- Serve static assets ---
 app.use("/css", express.static(path.join(__dirname, "css")));
