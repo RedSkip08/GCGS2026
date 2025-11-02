@@ -71,8 +71,8 @@ const upload = multer({
 });
 
 // --- Login credentials ---
-const LOGIN_USERNAME = "admin"; // replace or use environment variables later
-const LOGIN_PASSWORD = "password123"; // replace or use environment variables later
+const LOGIN_USERNAME = "***REMOVED***"; // replace or use environment variables later
+const LOGIN_PASSWORD = "***REMOVED***"; // replace or use environment variables later
 
 // --- HTML routes ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
