@@ -19,7 +19,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: false, // false for local testing, change to true on Render HTTPS
+    secure: false, // false for local testing, true on Render HTTPS
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24
   }
@@ -49,6 +49,8 @@ app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
 app.get("/abstractsubmission", (req, res) => res.sendFile(path.join(__dirname, "abstractsubmission", "index.html")));
 app.get("/submissioncomplete", (req, res) => res.sendFile(path.join(__dirname, "submissioncomplete", "index.html")));
+
+// Files page (requires login)
 app.get("/files", (req, res) => {
   if (!req.session.loggedIn) return res.redirect("/login");
   res.sendFile(path.join(__dirname, "files", "index.html"));
@@ -89,7 +91,7 @@ Submitted On: ${timestamp}
     try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
   }
 
-  submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName });
+  submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName, originalFile: originalFileName });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
@@ -135,6 +137,18 @@ app.get("/download/:file", (req, res) => {
   const filePath = path.join(UPLOADS_FOLDER, req.params.file);
   if (fs.existsSync(filePath)) res.download(filePath);
   else res.status(404).send("File not found");
+});
+
+// --- Dynamic folder serving for all other pages ---
+app.get("/:folder", (req, res) => {
+  const folder = req.params.folder;
+
+  // Prevent overriding /files route
+  if (folder === "files") return res.redirect("/files");
+
+  const filePath = path.join(__dirname, folder, "index.html");
+  if (fs.existsSync(filePath)) res.sendFile(filePath);
+  else res.status(404).send("Page not found");
 });
 
 // --- Start server ---
