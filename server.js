@@ -10,6 +10,8 @@ const path = require("path");
 const fs = require("fs");
 const session = require("express-session");
 const { Resend } = require("resend");
+const mime = require("mime-types");
+
 
 // ⚠️ Temporary: Hardcode your Resend API key for testing
 const resend = new Resend("***REMOVED***"); // <-- replace with your actual key
