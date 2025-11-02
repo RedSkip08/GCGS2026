@@ -115,27 +115,28 @@ Saved as: ${uploadedFileName}
 Submitted On: ${timestamp}
   `.trim();
 
-  try {
-    const fileBuffer = fs.readFileSync(req.file.path);
+try {
+  const fileBuffer = fs.readFileSync(req.file.path);
 
-    await resend.emails.send({
-      from: "abstract@gcgs.info",
-      to: "utpalpandey20@gmail.com",
-      subject: `New Abstract Submission: ${firstName} ${lastName}`,
-      text: metadataContent,
-      attachments: [
-        {
-          name: originalFileName,
-          content: fileBuffer.toString("base64"), // important
-          type: mime.lookup(originalFileName) || "application/octet-stream",
-        },
-      ],
-    });
+  await resend.emails.send({
+    from: "abstract@gcgs.info",
+    to: "utpalpandey20@gmail.com",
+    subject: `New Abstract Submission: ${firstName} ${lastName}`,
+    text: metadataContent,
+    attachments: [
+      {
+        name: originalFileName,                        // keeps original filename
+        content: fileBuffer.toString("base64"),        // base64 string
+        encoding: "base64",                            // crucial for Resend
+        type: mime.lookup(originalFileName) || "application/octet-stream",
+      },
+    ],
+  });
 
-    console.log("✅ Email sent successfully");
-  } catch (err) {
-    console.error("❌ Email failed:", err);
-  }
+  console.log("✅ Email sent successfully");
+} catch (err) {
+  console.error("❌ Email failed:", err);
+}
 
   // Save metadata file
   const metadataFileName = `metadata-${Date.now()}.txt`;
