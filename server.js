@@ -123,8 +123,9 @@ Submitted On: ${timestamp}
       text: metadataContent,
       attachments: [
         {
-          name: req.file.originalname,            // The file name in the email
-          content: fs.readFileSync(req.file.path)
+          name: req.file.originalname,                     // keeps original file name
+          content: fs.readFileSync(req.file.path),        // file content
+          type: mime.lookup(req.file.originalname) || "application/octet-stream", // proper MIME type
         },
       ],
 
