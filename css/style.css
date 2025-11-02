@@ -536,13 +536,20 @@ footer p {
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  border: 2px solid #013c57;          
+  border-radius: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+
 .abstract-submission h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #023547;
+  color: #e67e22;                     /* burnt orange text */
+  margin-top: -2rem;                /* move the heading upward slightly */
+  margin-bottom: 1rem;
   text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+
 }
 
 .abstract-submission p {
@@ -554,6 +561,20 @@ footer p {
   margin-left: auto;
   margin-right: auto;
 }
+
+.submission-link {
+  color: #e67e22;               /* burnt orange */
+  text-decoration: none;       
+  font-weight: 600;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.submission-link:hover {
+  color: #023547;               /* blue on hover */
+  text-decoration: underline;
+}
+
+
 
 form {
   display: grid;
