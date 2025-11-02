@@ -1,32 +1,44 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const tbody = document.querySelector("#files-list"); // matches your HTML
+// files.js
+document.addEventListener("DOMContentLoaded", () => {
+  const tableBody = document.getElementById("files-list");
 
-  try {
-    const response = await fetch("/api/submissions", { credentials: "same-origin" });
-    if (!response.ok) throw new Error("Unauthorized or failed to fetch submissions");
+  fetch("/api/submissions")
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized or server error");
+      return res.json();
+    })
+    .then(submissions => {
+      if (!submissions.length) {
+        tableBody.innerHTML = `<tr><td colspan="2">No submissions yet.</td></tr>`;
+        return;
+      }
 
-    const submissions = await response.json();
-    tbody.innerHTML = ""; // clear table
+      submissions.forEach(sub => {
+        const tr = document.createElement("tr");
 
-    submissions.forEach(sub => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${sub.firstName}</td>
-        <td>${sub.middleName}</td>
-        <td>${sub.lastName}</td>
-        <td>${sub.affiliation}</td>
-        <td>${sub.degreeProgram}</td>
-        <td>${sub.paperTitle}</td>
-        <td>${sub.keyword}</td>
-        <td>${sub.email}</td>
-        <td>${new Date(sub.timestamp).toLocaleString()}</td>
-        <td><a href="/uploads/${sub.fileName}" target="_blank">Download</a></td>
-      `;
-      tbody.appendChild(row);
+        // Metadata column
+        const metadataTd = document.createElement("td");
+        const metadataLink = document.createElement("a");
+        metadataLink.href = `/uploads/${sub.metadataFile}`;
+        metadataLink.textContent = "View Metadata";
+        metadataLink.target = "_blank";
+        metadataTd.appendChild(metadataLink);
+
+        // File column
+        const fileTd = document.createElement("td");
+        const fileLink = document.createElement("a");
+        fileLink.href = `/uploads/${sub.uploadedFile}`;
+        fileLink.textContent = sub.originalFile || "Download File";
+        fileLink.target = "_blank";
+        fileTd.appendChild(fileLink);
+
+        tr.appendChild(metadataTd);
+        tr.appendChild(fileTd);
+        tableBody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      tableBody.innerHTML = `<tr><td colspan="2">Failed to load submissions.</td></tr>`;
     });
-
-  } catch (err) {
-    console.error(err);
-    tbody.innerHTML = `<tr><td colspan="10">Failed to load submissions. Are you logged in?</td></tr>`;
-  }
 });

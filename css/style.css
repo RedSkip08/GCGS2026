@@ -1020,9 +1020,7 @@ main {
   cursor: pointer;
 }
 
-/* Files page */
-
-/* Section wrapper */
+/* --- Files Section --- */
 .files-section {
   max-width: 1200px;
   margin: 2rem auto;
@@ -1030,25 +1028,25 @@ main {
   background: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow-x: auto; /* allow horizontal scroll on small screens */
 }
 
-/* Table styling */
+/* --- Table styling --- */
 .files-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
   font-family: inherit;
 }
 
 .files-table th,
 .files-table td {
-  padding: 0.8rem;
+  padding: 1rem;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
 .files-table th {
-  background-color: #065171; /* match your site accent color */
+  background-color: #065171;
   color: #fff;
 }
 
@@ -1070,6 +1068,20 @@ main {
   text-decoration: underline;
 }
 
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .files-section {
+    padding: 1rem;
+  }
+  .files-table th, .files-table td {
+    padding: 0.6rem;
+  }
+  .files-table {
+    display: block;
+    overflow-x: auto; /* horizontal scroll */
+    white-space: nowrap;
+  }
+}
 
 
 /* logout */

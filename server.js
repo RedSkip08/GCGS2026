@@ -59,24 +59,36 @@ app.get("/files", (req, res) => {
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
-// Handle uploads
+// --- Handle uploads with metadata ---
 app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
 
-  const submissionData = {
-    timestamp: new Date().toISOString(),
-    firstName,
-    middleName: middleName || "",
-    lastName,
-    affiliation,
-    degreeProgram,
-    paperTitle,
-    keyword: keyword || "",
-    email,
-    fileName: req.file.filename
-  };
+  const timestamp = new Date().toISOString();
+  const uploadedFileName = req.file.filename;
+  const originalFileName = req.file.originalname;
 
+  // Create metadata content
+  const metadataContent = `
+First Name: ${firstName || ""}
+Middle Name: ${middleName || ""}
+Last Name: ${lastName || ""}
+Affiliation: ${affiliation || ""}
+Degree Program: ${degreeProgram || ""}
+Paper Title: ${paperTitle || ""}
+Keywords: ${keyword || ""}
+Email: ${email || ""}
+Uploaded File (original): ${originalFileName}
+Saved as: ${uploadedFileName}
+Submitted On: ${timestamp}
+  `.trim();
+
+  // Save metadata file
+  const metadataFileName = `metadata-${Date.now()}.txt`;
+  const metadataPath = path.join(UPLOADS_FOLDER, metadataFileName);
+  fs.writeFileSync(metadataPath, metadataContent);
+
+  // Save submission record in submissions.json
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
@@ -87,13 +99,20 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
       submissions = [];
     }
   }
-  submissions.push(submissionData);
+
+  submissions.push({
+    timestamp,
+    metadataFile: metadataFileName,
+    uploadedFile: uploadedFileName,
+    originalFile: originalFileName
+  });
+
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
 
-// Handle login
+// --- Handle login ---
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === LOGIN_USERNAME && password === LOGIN_PASSWORD) {
@@ -104,12 +123,12 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Logout
+// --- Logout ---
 app.get("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login"));
 });
 
-// API to get submissions
+// --- API to get submissions ---
 app.get("/api/submissions", (req, res) => {
   if (!req.session.loggedIn) return res.status(401).json({ error: "Unauthorized" });
 
@@ -126,19 +145,13 @@ app.get("/api/submissions", (req, res) => {
   res.json(submissions);
 });
 
-// Optional dynamic folder serving
+// --- Optional dynamic folder serving ---
 app.get("/:folder", (req, res) => {
   const folder = req.params.folder;
   const filePath = path.join(__dirname, folder, "index.html");
   if (fs.existsSync(filePath)) res.sendFile(filePath);
   else res.status(404).send("Page not found");
 });
-
-// logout
-app.get("/logout", (req, res) => {
-  req.session.destroy(() => res.redirect("/login"));
-});
-
 
 // --- Start server ---
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
