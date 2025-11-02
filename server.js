@@ -125,9 +125,8 @@ try {
     text: metadataContent,
     attachments: [
       {
-        name: originalFileName,                        // keeps original filename
-        content: fileBuffer.toString("base64"),        // base64 string
-        encoding: "base64",                            // crucial for Resend
+        name: originalFileName,       // keeps original filename & extension
+        content: fileBuffer,          // pass Buffer directly
         type: mime.lookup(originalFileName) || "application/octet-stream",
       },
     ],
