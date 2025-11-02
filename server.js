@@ -125,9 +125,9 @@ Submitted On: ${timestamp}
       text: metadataContent,
       attachments: [
         {
-          name: req.file.originalname,                     // keeps original file name
-          content: fs.readFileSync(req.file.path),        // file content
-          type: mime.lookup(req.file.originalname) || "application/octet-stream", // proper MIME type
+          name: req.file.originalname,
+          content: fileBuffer.toString("base64"), // Resend prefers base64
+          type: mime.lookup(req.file.originalname) || "application/octet-stream",
         },
       ],
 
