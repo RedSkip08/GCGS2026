@@ -209,16 +209,20 @@ app.get("/download/:file", (req, res) => {
   else res.status(404).send("File not found");
 });
 
+
+
 // --- Dynamic folder serving ---
-const allowedFolders = ["about", "contact", "home"];
 app.get("/:folder", (req, res) => {
   const folder = req.params.folder;
+  
+  // Skip /files (already handled)
   if (folder === "files") return res.redirect("/files");
-  if (!allowedFolders.includes(folder)) return res.status(404).send("Page not found");
+
   const filePath = path.join(__dirname, folder, "index.html");
   if (fs.existsSync(filePath)) res.sendFile(filePath);
   else res.status(404).send("Page not found");
 });
+
 
 // --- Start server ---
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
