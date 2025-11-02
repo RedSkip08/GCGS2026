@@ -1191,5 +1191,28 @@ main {
   }
 }
 
+/* Hide nav by default on mobile */
+#nav-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #2C3E50;
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  padding: 1rem;
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+/* Show menu when toggled */
+#nav-menu.show {
+  display: flex;
+}
+
+/* Hamburger animation (optional) */
+.menu-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
 
 

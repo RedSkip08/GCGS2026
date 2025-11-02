@@ -1,37 +1,25 @@
-// script.js
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // ===== Mobile Menu Toggle =====
-  
   const menuToggle = document.getElementById('menu-toggle');
   const navMenu = document.getElementById('nav-menu');
 
-  if(menuToggle) {
+  if (menuToggle && navMenu) {
     menuToggle.addEventListener('click', () => {
       navMenu.classList.toggle('show');
+      menuToggle.classList.toggle('open'); // optional: for hamburger animation
     });
   }
 
   // ===== Highlight Active Page in Navigation =====
-  const navLinks = document.querySelectorAll("nav-menu a");
+  const navLinks = document.querySelectorAll("#nav-menu a");
   let path = window.location.pathname;
-
-  // Remove trailing slash
   if (path.endsWith("/")) path = path.slice(0, -1);
-
-  // Get last part of path
   let currentPage = path.split("/").pop();
-
-  // Default homepage
   if (currentPage === "") currentPage = "index.html";
 
   navLinks.forEach(link => {
     let href = link.getAttribute("href");
-
-    // Remove ".html" to compare
     let hrefPage = href.replace(".html", "");
-
-    // Compare last path segment
     if (
       hrefPage === currentPage.replace(".html", "") ||
       (currentPage === "index.html" && href === "index.html")
@@ -41,10 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
       link.classList.remove("active");
     }
   });
-});
 
-document.addEventListener("DOMContentLoaded", async () => {
+  // ===== Load Submissions =====
   const tbody = document.querySelector("#files-list");
+  if (!tbody) return;
 
   try {
     const response = await fetch("/api/submissions", { credentials: "same-origin" });
@@ -56,21 +44,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     submissions.forEach(sub => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${sub.firstName}</td>
-        <td>${sub.middleName}</td>
-        <td>${sub.lastName}</td>
-        <td>${sub.affiliation}</td>
-        <td>${sub.degreeProgram}</td>
-        <td>${sub.paperTitle}</td>
-        <td>${sub.keyword}</td>
-        <td>${sub.email}</td>
-        <td>${new Date(sub.timestamp).toLocaleString()}</td>
-        <td><a href="/uploads/${sub.fileName}" target="_blank">Download</a></td>
+        <td><a href="/metadata/${sub.metadataFile}" target="_blank">Metadata</a></td>
+        <td><a href="/download/${sub.uploadedFile}" target="_blank">File</a></td>
       `;
       tbody.appendChild(row);
     });
   } catch (err) {
     console.error(err);
-    tbody.innerHTML = `<tr><td colspan="10">Failed to load submissions. Are you logged in?</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="2">Failed to load submissions. Are you logged in?</td></tr>`;
   }
 });
