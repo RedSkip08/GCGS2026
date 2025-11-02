@@ -1257,7 +1257,7 @@ main {
     padding-bottom: 1.5rem; /* adjust as needed */
 }
 
-.cfp .deadline {
+.deadline {
     font-weight: bold;
     color: red; /* or #c00 */
 }
