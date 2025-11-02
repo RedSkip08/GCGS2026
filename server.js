@@ -13,17 +13,15 @@ const { Resend } = require("resend");
 
 // ⚠️ Temporary: Hardcode your Resend API key for testing
 const resend = new Resend("re_bnqStYc5_2FkTfR8Wk5QKcpqdkze9enL4"); // <-- replace with your actual key
+
+// ⚠️ Hardcoded session secret for testing
 const SESSION_SECRET = "***REMOVED***";
 
 console.log("✅ Using hardcoded Resend API key for test");
 console.log("✅ Using hardcoded session secret for test");
 
-// Optional: check if environment variable is loaded (for future switch)
-console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded" : "Missing");
-
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 
 // --- Serve static assets ---
 app.use("/css", express.static(path.join(__dirname, "css")));
@@ -34,7 +32,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.set("trust proxy", 1); // required for HTTPS proxies
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: SESSION_SECRET, // <- hardcoded for now
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -72,9 +70,9 @@ const upload = multer({
   },
 });
 
-// --- Login credentials from environment variables ---
-const LOGIN_USERNAME = process.env.LOGIN_USERNAME;
-const LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
+// --- Login credentials ---
+const LOGIN_USERNAME = "admin"; // replace or use environment variables later
+const LOGIN_PASSWORD = "password123"; // replace or use environment variables later
 
 // --- HTML routes ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
@@ -149,10 +147,15 @@ Submitted On: ${timestamp}
       submissions = [];
     }
   }
-  submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName, originalFile: originalFileName, emailSent: true });
+  submissions.push({
+    metadataFile: metadataFileName,
+    uploadedFile: uploadedFileName,
+    originalFile: originalFileName,
+    emailSent: true,
+  });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
-  // Optionally delete uploaded file to save space (remove if you want to keep)
+  // Optionally delete uploaded file to save space
   try { fs.unlinkSync(req.file.path); } catch {}
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
@@ -206,7 +209,7 @@ app.get("/download/:file", (req, res) => {
   else res.status(404).send("File not found");
 });
 
-// --- Dynamic folder serving for specific pages ---
+// --- Dynamic folder serving ---
 const allowedFolders = ["about", "contact", "home"];
 app.get("/:folder", (req, res) => {
   const folder = req.params.folder;
