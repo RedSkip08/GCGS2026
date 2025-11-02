@@ -1,10 +1,18 @@
+// server.js
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const session = require("express-session");
-const { Resend } = require("resend"); // ✅ Added Resend
-const resend = new Resend('re_bnqStYc5_2FkTfR8Wk5QKcpqdkze9enL4'); // <-- Your API key
+const { Resend } = require("resend");
+
+// Load environment variables in local development
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+// Initialize Resend with API key from env
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,17 +23,19 @@ app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // --- Session setup ---
-app.set('trust proxy', 1); // required for HTTPS proxies
-app.use(session({
-  secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { 
-    secure: false, // false for local testing, true on Render HTTPS
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24
-  }
-}));
+app.set("trust proxy", 1); // required for HTTPS proxies
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // false for local testing, true on Render HTTPS
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+  })
+);
 
 // --- Parse form data ---
 app.use(express.urlencoded({ extended: true }));
@@ -35,22 +45,38 @@ app.use(express.json());
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
 
-// --- Multer setup ---
+// --- Multer setup with limits and file type validation ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_FOLDER),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1 MB max
+  fileFilter: (req, file, cb) => {
+    const allowed = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (allowed.includes(file.mimetype)) cb(null, true);
+    else cb(new Error("Invalid file type"));
+  },
+});
 
-// --- Login credentials ---
-const LOGIN_USERNAME = "***REMOVED***";
-const LOGIN_PASSWORD = "***REMOVED***";
+// --- Login credentials from environment variables ---
+const LOGIN_USERNAME = process.env.LOGIN_USERNAME;
+const LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
 
 // --- HTML routes ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
-app.get("/abstractsubmission", (req, res) => res.sendFile(path.join(__dirname, "abstractsubmission", "index.html")));
-app.get("/submissioncomplete", (req, res) => res.sendFile(path.join(__dirname, "submissioncomplete", "index.html")));
+app.get("/abstractsubmission", (req, res) =>
+  res.sendFile(path.join(__dirname, "abstractsubmission", "index.html"))
+);
+app.get("/submissioncomplete", (req, res) =>
+  res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"))
+);
 
 // Files page (requires login)
 app.get("/files", (req, res) => {
@@ -58,7 +84,7 @@ app.get("/files", (req, res) => {
   res.sendFile(path.join(__dirname, "files", "index.html"));
 });
 
-// --- Handle abstract upload (updated for Resend email) ---
+// --- Handle abstract upload with Resend email ---
 app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
@@ -85,8 +111,8 @@ Submitted On: ${timestamp}
   // --- Send email with Resend ---
   try {
     await resend.emails.send({
-      from: 'onboarding@resend.dev',           // verified sender in Resend
-      to: 'utpalpandey20@gmail.com',          // your email
+      from: "abstract@gcgs.info", // verified sender in Resend
+      to: "utpalpandey20@gmail.com", // your recipients
       subject: `New Abstract Submission: ${firstName} ${lastName}`,
       text: metadataContent,
       attachments: [
@@ -101,9 +127,6 @@ Submitted On: ${timestamp}
     console.error("❌ Email failed:", err);
   }
 
-  // Optionally delete the uploaded file to save space
-  try { fs.unlinkSync(req.file.path); } catch {}
-
   // Save metadata file
   const metadataFileName = `metadata-${Date.now()}.txt`;
   fs.writeFileSync(path.join(UPLOADS_FOLDER, metadataFileName), metadataContent);
@@ -112,11 +135,17 @@ Submitted On: ${timestamp}
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
-    try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
+    try {
+      submissions = JSON.parse(fs.readFileSync(submissionsFile));
+    } catch {
+      submissions = [];
+    }
   }
-
   submissions.push({ metadataFile: metadataFileName, uploadedFile: uploadedFileName, originalFile: originalFileName, emailSent: true });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
+
+  // Optionally delete uploaded file to save space (remove if you want to keep)
+  try { fs.unlinkSync(req.file.path); } catch {}
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
@@ -143,7 +172,11 @@ app.get("/api/submissions", (req, res) => {
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
-    try { submissions = JSON.parse(fs.readFileSync(submissionsFile)); } catch { submissions = []; }
+    try {
+      submissions = JSON.parse(fs.readFileSync(submissionsFile));
+    } catch {
+      submissions = [];
+    }
   }
   res.json(submissions);
 });
@@ -151,25 +184,26 @@ app.get("/api/submissions", (req, res) => {
 // --- Secure download routes ---
 app.get("/metadata/:file", (req, res) => {
   if (!req.session.loggedIn) return res.status(401).send("Unauthorized");
-  const filePath = path.join(UPLOADS_FOLDER, req.params.file);
+  const fileName = path.basename(req.params.file);
+  const filePath = path.join(UPLOADS_FOLDER, fileName);
   if (fs.existsSync(filePath)) res.download(filePath);
   else res.status(404).send("File not found");
 });
 
 app.get("/download/:file", (req, res) => {
   if (!req.session.loggedIn) return res.status(401).send("Unauthorized");
-  const filePath = path.join(UPLOADS_FOLDER, req.params.file);
+  const fileName = path.basename(req.params.file);
+  const filePath = path.join(UPLOADS_FOLDER, fileName);
   if (fs.existsSync(filePath)) res.download(filePath);
   else res.status(404).send("File not found");
 });
 
-// --- Dynamic folder serving for all other pages ---
+// --- Dynamic folder serving for specific pages ---
+const allowedFolders = ["about", "contact", "home"];
 app.get("/:folder", (req, res) => {
   const folder = req.params.folder;
-
-  // Prevent overriding /files route
   if (folder === "files") return res.redirect("/files");
-
+  if (!allowedFolders.includes(folder)) return res.status(404).send("Page not found");
   const filePath = path.join(__dirname, folder, "index.html");
   if (fs.existsSync(filePath)) res.sendFile(filePath);
   else res.status(404).send("Page not found");
