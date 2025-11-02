@@ -14,7 +14,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Session setup
 app.use(session({
-  secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$", // change to a strong secret
+  secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$", // strong secret
   resave: false,
   saveUninitialized: false
 }));
@@ -41,15 +41,21 @@ app.use(express.json());
 const LOGIN_USERNAME = "worker";      
 const LOGIN_PASSWORD = "mypassword";  
 
-// Serve pages
+// Serve static HTML pages
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
 app.get("/abstractsubmission", (req, res) =>
   res.sendFile(path.join(__dirname, "abstractsubmission", "index.html"))
 );
 app.get("/submissioncomplete", (req, res) =>
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"))
 );
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
+app.get("/files", (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.status(401).send("Unauthorized. Please <a href='/login'>login</a>.");
+  }
+  res.sendFile(path.join(__dirname, "files", "index.html")); // your HTML page for files
+});
 
 // Handle abstract uploads
 app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
@@ -57,20 +63,10 @@ app.post("/upload-abstract", upload.single("abstractFile"), (req, res) => {
   console.log("Form fields:", req.body);
   console.log("Uploaded file:", req.file);
 
-  const {
-    firstName,
-    middleName,
-    lastName,
-    affiliation,
-    degreeProgram,
-    paperTitle,
-    keyword,
-    email,
-  } = req.body;
+  const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
 
   if (!req.file) return res.status(400).send("No file uploaded.");
 
-  // Save submission details
   const submissionData = {
     timestamp: new Date().toISOString(),
     firstName,
@@ -120,10 +116,10 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// Files page (protected by session)
-app.get("/files", (req, res) => {
+// API endpoint to get submissions data (JSON)
+app.get("/api/submissions", (req, res) => {
   if (!req.session.loggedIn) {
-    return res.status(401).send("Unauthorized. Please <a href='/login'>login</a>.");
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   const submissionsFile = path.join(__dirname, "submissions.json");
@@ -137,17 +133,7 @@ app.get("/files", (req, res) => {
     }
   }
 
-  let html = '<h1>Uploaded Files & Metadata</h1><ul>';
-  submissions.forEach(sub => {
-    html += `<li>
-      <strong>${sub.firstName || ""} ${sub.middleName || ""} ${sub.lastName || ""}</strong> - 
-      ${sub.affiliation || ""} - ${sub.degreeProgram || ""} - ${sub.paperTitle || ""} - ${sub.keyword || ""} - 
-      ${sub.email || ""} - ${sub.timestamp || ""} 
-      ${sub.fileName ? `<a href="/uploads/${sub.fileName}" download>[Download]</a>` : ""}
-    </li>`;
-  });
-  html += '</ul><a href="/logout">Logout</a>';
-  res.send(html);
+  res.json(submissions);
 });
 
 // Dynamic folder serving (optional)
