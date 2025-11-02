@@ -42,8 +42,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // --- Login credentials ---
-const LOGIN_USERNAME = "worker";
-const LOGIN_PASSWORD = "mypassword";
+const LOGIN_USERNAME = "***REMOVED***";
+const LOGIN_PASSWORD = "***REMOVED***";
 
 // --- Routes ---
 
