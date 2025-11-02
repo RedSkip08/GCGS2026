@@ -1070,6 +1070,59 @@ main {
   text-decoration: underline;
 }
 
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+
+  .files-section {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  /* Make table scroll horizontally on small screens */
+  .files-section {
+    overflow-x: auto;
+  }
+
+  .files-table {
+    width: 100%;
+    min-width: 700px; /* allow horizontal scroll if needed */
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .files-table th,
+  .files-table td {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  /* Optional: improve hover visibility on mobile */
+  .files-table tr:hover {
+    background-color: #d6ebfa;
+  }
+}
+
+/* Super small screens (phones under 480px) */
+@media (max-width: 480px) {
+  .files-table th,
+  .files-table td {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .files-section h1 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .files-section p {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+}
+
+
 /* logout */
 .logout-button {
   background-color: #e74c3c;
