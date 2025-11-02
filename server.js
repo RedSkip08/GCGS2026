@@ -12,13 +12,17 @@ app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// --- Session setup ---
-app.set('trust proxy', 1); // for Render HTTPS
+// --- Session setup (works on Render HTTPS) ---
+app.set('trust proxy', 1); // required if behind HTTPS proxy
 app.use(session({
   secret: "k9T!v4R@8xQ7&f2Lz#1mP^0wS6bC3dY$",
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true } // must be true for HTTPS on Render
+  cookie: { 
+    secure: true, // required for HTTPS
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
 }));
 
 // --- Parse form data ---
