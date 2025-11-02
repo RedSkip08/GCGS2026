@@ -124,9 +124,10 @@ Submitted On: ${timestamp}
       attachments: [
         {
           name: originalFileName,
-          content: fs.readFileSync(req.file.path),
+          path: req.file.path, // ✅ Resend will read from file path
         },
       ],
+
     });
     console.log("✅ Email sent successfully");
   } catch (err) {
