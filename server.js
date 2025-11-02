@@ -32,7 +32,6 @@ app.use(express.json());
 // --- Ensure uploads folder exists ---
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
-app.use('/uploads', express.static(UPLOADS_FOLDER));
 
 // --- Multer setup ---
 const storage = multer.diskStorage({
@@ -143,6 +142,36 @@ app.get("/api/submissions", (req, res) => {
   }
 
   res.json(submissions);
+});
+
+// --- Secure download routes ---
+
+// Metadata download
+app.get("/metadata/:file", (req, res) => {
+  if (!req.session.loggedIn) return res.status(401).send("Unauthorized");
+
+  const file = req.params.file;
+  const filePath = path.join(UPLOADS_FOLDER, file);
+
+  if (fs.existsSync(filePath)) {
+    res.download(filePath);
+  } else {
+    res.status(404).send("File not found");
+  }
+});
+
+// Uploaded file download
+app.get("/download/:file", (req, res) => {
+  if (!req.session.loggedIn) return res.status(401).send("Unauthorized");
+
+  const file = req.params.file;
+  const filePath = path.join(UPLOADS_FOLDER, file);
+
+  if (fs.existsSync(filePath)) {
+    res.download(filePath);
+  } else {
+    res.status(404).send("File not found");
+  }
 });
 
 // --- Optional dynamic folder serving ---
