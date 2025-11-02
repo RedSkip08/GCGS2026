@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const session = require("express-session");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +11,13 @@ const PORT = process.env.PORT || 3000;
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
+
+// Session setup
+app.use(session({
+  secret: "yourStrongSecretHere", // change to a strong secret
+  resave: false,
+  saveUninitialized: false
+}));
 
 // Ensure uploads folder exists
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
@@ -101,27 +109,11 @@ app.get("/:folder", (req, res) => {
   else res.status(404).send("Page not found");
 });
 
-// ✅ Password-protected files listing
-const FILES_PASSWORD = "mypassword"; // CHANGE this to a strong password
-app.get("/files", (req, res) => {
-  const password = req.query.password;
-  if (password !== FILES_PASSWORD) {
-    return res.status(401).send("Unauthorized: wrong password");
-  }
-
-  const files = fs.readdirSync(UPLOADS_FOLDER);
-  let html = '<h1>Uploaded Files</h1><ul>';
-  files.forEach(file => {
-    html += `<li><a href="/uploads/${file}" download>${file}</a></li>`;
-  });
-  html += '</ul>';
-  res.send(html);
-});
-
-// ✅ Login page
+// ✅ Login credentials
 const LOGIN_USERNAME = "worker";      // change this if needed
-const LOGIN_PASSWORD = "mypassword";  // can be same as FILES_PASSWORD
+const LOGIN_PASSWORD = "mypassword";  // change this if needed
 
+// Serve login page
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "login", "index.html"));
 });
@@ -131,12 +123,45 @@ app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   if (username === LOGIN_USERNAME && password === LOGIN_PASSWORD) {
-    // Login successful → redirect to files page
-    res.redirect(`/files?password=${FILES_PASSWORD}`);
+    req.session.loggedIn = true;   // mark user as logged in
+    res.redirect("/files");
   } else {
-    // Login failed → show message
     res.status(401).send("Invalid username or password. <a href='/login'>Try again</a>");
   }
+});
+
+// Logout route
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/login");
+});
+
+// ✅ Files page with metadata
+app.get("/files", (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.status(401).send("Unauthorized. Please <a href='/login'>login</a>.");
+  }
+
+  const submissionsFile = path.join(__dirname, "submissions.json");
+  let submissions = [];
+  if (fs.existsSync(submissionsFile)) {
+    try {
+      submissions = JSON.parse(fs.readFileSync(submissionsFile));
+    } catch (err) {
+      console.error("Error reading submissions.json:", err);
+      submissions = [];
+    }
+  }
+
+  let html = '<h1>Uploaded Files & Metadata</h1><ul>';
+  submissions.forEach(sub => {
+    html += `<li>
+      <strong>${sub.firstName} ${sub.middleName} ${sub.lastName}</strong> - ${sub.affiliation} - ${sub.degreeProgram} - ${sub.paperTitle} - ${sub.keyword} - ${sub.email} - ${sub.timestamp} 
+      <a href="/uploads/${sub.fileName}" download>[Download]</a>
+    </li>`;
+  });
+  html += '</ul><a href="/logout">Logout</a>';
+  res.send(html);
 });
 
 // Start server
