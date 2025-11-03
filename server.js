@@ -21,6 +21,8 @@ const LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
 console.log("✅ Loaded environment variables:");
 console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded ✅" : "Missing ⚠️");
 console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "Loaded ✅" : "Missing ⚠️");
+console.log("Render environment RESEND_API_KEY:", !!process.env.RESEND_API_KEY);
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
