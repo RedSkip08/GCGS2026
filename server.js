@@ -11,7 +11,6 @@ const fs = require("fs");
 const session = require("express-session");
 const { Resend } = require("resend");
 const mime = require("mime-types");
-const nodemailer = require("nodemailer"); // NEW
 
 // --- Use environment variables ---
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -24,39 +23,6 @@ console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded ✅" : "Miss
 console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "Loaded ✅" : "Missing ⚠️");
 console.log("Render environment RESEND_API_KEY:", !!process.env.RESEND_API_KEY);
 
-// --- Gmail transporter setup --- NEW
-const gmailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER, // your Gmail
-    pass: process.env.GMAIL_PASS, // Gmail App Password
-  },
-});
-
-// Function to send Gmail notification with metadata & uploaded file --- NEW
-function sendGmailNotification(file, sanitizedFileName, metadataFileName, metadataContent, originalFileName) {
-  const mailOptions = {
-    from: process.env.GMAIL_USER,
-    to: process.env.GMAIL_USER, // send to yourself
-    subject: `New Abstract Uploaded: ${file.originalname}`,
-    text: metadataContent,
-    attachments: [
-      {
-        filename: sanitizedFileName,
-        path: file.path,
-      },
-      {
-        filename: metadataFileName,
-        content: metadataContent,
-      },
-    ],
-  };
-
-  gmailTransporter.sendMail(mailOptions, (err, info) => {
-    if (err) console.error("❌ Gmail send failed:", err);
-    else console.log("✅ Gmail sent:", info.response);
-  });
-}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -152,12 +118,9 @@ Saved as: ${uploadedFileName}
 Submitted On: ${timestamp}
   `.trim();
 
-  const metadataFileName = `metadata-${Date.now()}.txt`;
-
   try {
     const fileBuffer = fs.readFileSync(req.file.path);
 
-    // --- Existing Resend email ---
     await resend.emails.send({
       from: "abstract@gcgs.info",
       to: "utpalpandey20@gmail.com",
@@ -172,16 +135,12 @@ Submitted On: ${timestamp}
       ],
     });
 
-    console.log("✅ Resend email sent successfully");
-
-    // --- NEW: Gmail notification with attachment and metadata ---
-    sendGmailNotification(req.file, sanitizedFileName, metadataFileName, metadataContent, originalFileName);
-
+    console.log("✅ Email sent successfully");
   } catch (err) {
     console.error("❌ Email failed:", err);
   }
 
-  // --- Save metadata locally ---
+  const metadataFileName = `metadata-${Date.now()}.txt`;
   fs.writeFileSync(path.join(UPLOADS_FOLDER, metadataFileName), metadataContent);
 
   const submissionsFile = path.join(__dirname, "submissions.json");
