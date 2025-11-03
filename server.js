@@ -12,15 +12,15 @@ const session = require("express-session");
 const { Resend } = require("resend");
 const mime = require("mime-types");
 
+// --- Use environment variables ---
+const resend = new Resend(process.env.RESEND_API_KEY);
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const LOGIN_USERNAME = process.env.LOGIN_USERNAME;
+const LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
 
-// ⚠️ Temporary: Hardcode your Resend API key for testing
-const resend = new Resend("***REMOVED***"); // <-- replace with your actual key
-
-// ⚠️ Hardcoded session secret for testing
-const SESSION_SECRET = "***REMOVED***";
-
-console.log("✅ Using hardcoded Resend API key for test");
-console.log("✅ Using hardcoded session secret for test");
+console.log("✅ Loaded environment variables:");
+console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded ✅" : "Missing ⚠️");
+console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "Loaded ✅" : "Missing ⚠️");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,7 +34,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.set("trust proxy", 1); // required for HTTPS proxies
 app.use(
   session({
-    secret: SESSION_SECRET, // <- hardcoded for now
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -72,10 +72,6 @@ const upload = multer({
   },
 });
 
-// --- Login credentials ---
-const LOGIN_USERNAME = "***REMOVED***"; // replace or use environment variables later
-const LOGIN_PASSWORD = "***REMOVED***"; // replace or use environment variables later
-
 // --- HTML routes ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
@@ -94,7 +90,6 @@ app.get("/files", (req, res) => {
 
 // --- Helper function to sanitize filenames ---
 function sanitizeFilename(filename) {
-  // Replace spaces and unsafe characters with underscores
   return filename.replace(/[^a-zA-Z0-9.\-_]/g, "_");
 }
 
@@ -107,7 +102,6 @@ app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => 
   const originalFileName = req.file.originalname;
   const sanitizedFileName = sanitizeFilename(originalFileName);
 
-  // --- Metadata content ---
   const metadataContent = `
 First Name: ${firstName || ""}
 Middle Name: ${middleName || ""}
@@ -125,7 +119,6 @@ Submitted On: ${timestamp}
   try {
     const fileBuffer = fs.readFileSync(req.file.path);
 
-    // --- Send email with attachment ---
     await resend.emails.send({
       from: "abstract@gcgs.info",
       to: "utpalpandey20@gmail.com",
@@ -133,8 +126,8 @@ Submitted On: ${timestamp}
       text: metadataContent,
       attachments: [
         {
-          name: sanitizedFileName,   // safe filename for email attachment
-          content: fileBuffer,       // pass Buffer directly
+          name: sanitizedFileName,
+          content: fileBuffer,
           type: mime.lookup(originalFileName) || "application/octet-stream",
         },
       ],
@@ -145,11 +138,9 @@ Submitted On: ${timestamp}
     console.error("❌ Email failed:", err);
   }
 
-  // --- Save metadata file ---
   const metadataFileName = `metadata-${Date.now()}.txt`;
   fs.writeFileSync(path.join(UPLOADS_FOLDER, metadataFileName), metadataContent);
 
-  // --- Save submission record ---
   const submissionsFile = path.join(__dirname, "submissions.json");
   let submissions = [];
   if (fs.existsSync(submissionsFile)) {
@@ -163,14 +154,8 @@ Submitted On: ${timestamp}
   });
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
-  // --- Keep uploaded file for download ---
-  // try { fs.unlinkSync(req.file.path); } catch {}
-
-  // --- Send submission complete page ---
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
-
-
 
 // --- Login ---
 app.post("/login", (req, res) => {
@@ -220,20 +205,15 @@ app.get("/download/:file", (req, res) => {
   else res.status(404).send("File not found");
 });
 
-
-
 // --- Dynamic folder serving ---
 app.get("/:folder", (req, res) => {
   const folder = req.params.folder;
-  
-  // Skip /files (already handled)
   if (folder === "files") return res.redirect("/files");
 
   const filePath = path.join(__dirname, folder, "index.html");
   if (fs.existsSync(filePath)) res.sendFile(filePath);
   else res.status(404).send("Page not found");
 });
-
 
 // --- Start server ---
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
