@@ -54,3 +54,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     tbody.innerHTML = `<tr><td colspan="2">Failed to load submissions. Are you logged in?</td></tr>`;
   }
 });
+
+// ==== active link ====
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPath = window.location.pathname.replace(/^\/|\/$/g, ""); // remove leading/trailing slashes
+  const links = document.querySelectorAll("#nav-menu a");
+
+  links.forEach(link => {
+    const href = link.getAttribute("href").replace(/^\/|\/$/g, "");
+    if (currentPath === href || (currentPath === "" && href === "home")) {
+      link.classList.add("active");
+    }
+  });
+});
+

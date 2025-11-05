@@ -35,6 +35,7 @@ header {
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 6px #BF5700;
+    backdrop-filter: blur(6px);
 }
 
 
@@ -163,23 +164,39 @@ header {
 #nav-menu {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 #nav-menu a {
     text-decoration: none;
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: background 0.3s ease;
 }
 
-#nav-menu a:hover,
-#nav-menu  a.active {
-    background-color: #BF5700;
+#nav-menu a:hover {
+    color: var(--ut-orange);
 }
+
+#nav-menu a.active {
+  color: #ffffff;
+  font-weight: 600;
+  position: relative;
+}
+
+#nav-menu a.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--ut-orange);
+}
+
 
 /* =================== MOBILE NAVIGATION & HEADER =================== */
 @media (max-width: 768px) {
@@ -505,8 +522,8 @@ footer p {
   justify-items: center;
 }
 .committee-member img {
-  width: 160px;
-  height: 160px;
+  width: 170px;
+  height: 200px;
   object-fit: cover;
   border-radius: 50%; 
   margin-bottom: 1rem;
@@ -693,13 +710,14 @@ button[type="submit"]:hover {
 
 
 .home-news {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   background-color: #f5f5f5;  
   font-family: 'Helvetica Neue', sans-serif;
 }
 
 .home-news h2 {
   text-align: center;
+  margin-top: 0rem;
   margin-bottom: 2rem;
   font-size: 2rem;
   color: #333;
@@ -1282,6 +1300,105 @@ main {
   color: #BF5700;
   font-size: 2rem; 
 }
+
+
+.previous-confs {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+}
+
+.previous-confs th,
+.previous-confs td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.previous-confs th {
+  background-color: var(--ut-orange);
+  color: #fff;
+}
+
+.previous-confs .iteration {
+
+  background-color: var(--nordic-blue);
+  color: #fff;
+
+}
+
+.previous-confs tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.previous-confs tr:hover {
+  background-color: #e0f0ff;
+}
+
+.previous-confs a {
+  color: #065171;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.previous-confs a:hover {
+  text-decoration: underline;
+}
+
+/* UT Tower Banner */
+.welcome {
+  margin-top: 2rem;
+  position: relative;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  overflow: hidden;             
+  max-height: 400px;            
+}
+
+.welcome img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;            
+  display: block;
+}
+
+.timeline {
+  position: relative;
+  margin: 3rem auto;
+  padding-left: 2rem;
+  border-left: 3px solid #ff7b00; /* main line color */
+  max-width: 600px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  background: #ff7b00;
+  border-radius: 50%;
+}
+
+.timeline-date {
+  font-weight: bold;
+  color: #333;
+}
+
+.timeline-event {
+  color: #555;
+  font-size: 1rem;
+}
+
+
+
 
 
 
