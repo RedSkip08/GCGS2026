@@ -324,72 +324,54 @@ main {
 }
 
 @media (max-width: 480px) {
-  main .hero {
-    margin-top: -5rem; /* pull hero section upward */
-  }
-
-  main .hero h1 {
-    margin-top: 1rem; /* prevent heading from adding its own gap */
-  }
-}
-
-
-@media (max-width: 480px) {
+  /* Reset body spacing */
   body {
     margin: 0;
     padding-top: 40px;
   }
 
+  /* Main container adjustments */
   main {
     margin-top: 0;
-    /* ⚠️ padding-top: -50px; was invalid — negative padding doesn’t exist */
+    padding-top: 0; 
   }
 
+  /* Hero section */
   .hero {
     position: relative;
-    margin-top: -6rem; /* pulls the whole hero up */
+    margin-top: -4rem; 
     padding-top: 0;
     text-align: center;
   }
 
-  /* Combined hero + main specific tweaks */
-  main .hero {
-    margin-top: -6rem;
-  }
-
-  main .hero h1,
-  .hero h1 {
-    font-size: 1.5rem;
-    line-height: 1;
+  /* Hero h1 heading */
+  #hero-heading {
+    font-size: 1rem;       
+    line-height: 1.1;      
+    margin-top: -1rem; 
+    margin-bottom: 0.3rem;
     white-space: normal;
     word-break: break-word;
-    margin-bottom: 0.5rem;
-    margin-top: -6rem; 
   }
 
-  #hero-heading {
-    font-size: 0.6rem;        
-    line-height: 1.1;       
-    margin-top: 0;           
-    margin-bottom: 0.3rem;
-  }
-
+  /* Optional h2 */
   .hero h2 {
     font-size: 0.8rem;
-    line-height: 1.3;
-    margin-top: 1rem;
+    line-height: 1.2;
+    margin-top: 0.5rem;
   }
 
+  /* Conference details */
   .conference-details h3 {
     font-size: 0.9rem;     
     line-height: 1.1;
-    margin-top: 1rem;         
+    margin-top: 0.5rem;         
     margin-bottom: 0.3rem;
   }
 
   .conference-details p {
-    font-size: 1rem;
-    margin-top: 1rem;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
   }
 }
 
