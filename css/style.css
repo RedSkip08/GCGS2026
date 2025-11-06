@@ -337,26 +337,45 @@ main {
     padding-top: 80px;
   }
   .hero {
-    margin-top: -10rem;
+    margin-top: 0;      
+    padding: 1.5rem 1rem;
+    text-align: center;
   }
 
   .hero h1 {
-    font-size: 0.5rem;
+    font-size: 1.8rem;        
+    line-height: 1.2;         
+    white-space: nowrap;      
+    overflow: hidden;         
+    text-overflow: ellipsis;   
+    margin-bottom: 0.5rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  /* Conference details h3 */
+  .conference-details h3 {
+    font-size: 1.4rem;        
+    line-height: 1.2;
+    white-space: nowrap;        
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-bottom: 0.3rem;
   }
 
-  .conference-details h3 {
+  .hero h1, .conference-details h3 {
+  white-space: normal;  
+  word-break: break-word;
+}
 
-    font-size: 0.2rem;
 
-  }
-
+  /* Conference details paragraph */
   .conference-details p {
-
     font-size: 1rem;
-
   }
-  
 }
 
 
