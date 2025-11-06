@@ -338,7 +338,7 @@ main {
 
 
 .abstract-submission h1 {
-  margin-top: 4rem;
+  margin-top: -2rem;
   margin-bottom: 1rem;
 }
 
@@ -622,8 +622,8 @@ footer p {
 
 
 .abstract-submission h1 {
-  color: #e67e22;                     /* burnt orange text */
-  margin-top: -2rem;                /* move the heading upward slightly */
+  color: #e67e22;                    
+  margin-top: -2rem;               
   margin-bottom: 1rem;
   text-align: center;
   font-size: 2rem;
