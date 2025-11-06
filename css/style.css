@@ -347,14 +347,14 @@ main {
 
   .hero {
     position: relative;
-    margin-top: -5rem; /* pulls the whole hero up */
+    margin-top: -6rem; /* pulls the whole hero up */
     padding-top: 0;
     text-align: center;
   }
 
   /* Combined hero + main specific tweaks */
   main .hero {
-    margin-top: -3rem;
+    margin-top: -6rem;
   }
 
   main .hero h1,
@@ -364,11 +364,11 @@ main {
     white-space: normal;
     word-break: break-word;
     margin-bottom: 0.5rem;
-    margin-top: -3rem; 
+    margin-top: -6rem; 
   }
 
   #hero-heading {
-    font-size: 1rem;        
+    font-size: 0.6rem;        
     line-height: 1.1;       
     margin-top: 0;           
     margin-bottom: 0.3rem;
@@ -383,7 +383,7 @@ main {
   .conference-details h3 {
     font-size: 0.9rem;     
     line-height: 1.1;
-    margin-top: 0;         
+    margin-top: 1rem;         
     margin-bottom: 0.3rem;
   }
 
