@@ -336,13 +336,9 @@ main {
     padding-top: 0; 
   }
 
-  section {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
 
 .abstract-submission h1 {
-  margin-top: 2rem;
+  margin-top: 4rem;
   margin-bottom: 1rem;
 }
 
