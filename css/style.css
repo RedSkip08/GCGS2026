@@ -310,7 +310,7 @@ main {
 
 /* Hero */
 .hero {
-  margin-top: -110px; 
+  margin-top: -5rem; 
   text-align: center;
   padding: 2rem 1rem; 
 }
@@ -394,6 +394,9 @@ main {
     }
     .highlight {
         flex: 1 1 100%;
+    }
+    .hero{
+      margin-top: -5rem;
     }
 }
 
@@ -1397,15 +1400,81 @@ main {
   font-size: 1rem;
 }
 
+.keynote {
+  max-width: 900px;
+  margin: -3rem auto;
+  font-family: system-ui, sans-serif;
+  color: #222;
+  line-height: 1.6;
+}
+
+.keynote h2 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ddd;
+  display: inline-block;
+  padding-bottom: 0.3rem;
+}
+
+.speaker-card {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.speaker-left {
+  flex: 0 0 280px;
+  margin-top: 6rem;
+  text-align: center;
+}
+
+.speaker-left img {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Name, position */
+.name-title h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.name-title .position,
+.name-title .university {
+  margin: 0;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.speaker-right {
+  flex: 1;
+  text-align: left;
+}
+
+.speaker-right h2 {
+  font-size: 1.8rem;
+  border-bottom: 2px solid var(--rhein-amber);
+  display: inline-block; 
+  padding-bottom: 0.3rem;
+  text-align: center; 
+  width: 100%; 
+  margin-bottom: 1rem;
+}
 
 
+/* Responsive: stack columns on small screens */
+@media (max-width: 700px) {
+  .speaker-card {
+    flex-direction: column;
+    align-items: center;
+  }
 
-
-
-
-
-
-
-
-
-
+  .speaker-right {
+    text-align: center;
+  }
+}
