@@ -68,3 +68,28 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// ==== files size error ====
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('upload-form');
+  const fileInput = document.getElementById('abstractFile');
+  const submissionMessage = document.getElementById('submissionMessage');
+
+  form.addEventListener('submit', (e) => {
+    const file = fileInput.files[0];
+
+    if (!file) return; // no file selected
+
+    const maxSize = 1 * 1024 * 1024; // 1MB in bytes
+    if (file.size > maxSize) {
+      e.preventDefault(); // stop form submission
+      submissionMessage.textContent = `Error: File "${file.name}" exceeds 1MB limit!`;
+      submissionMessage.style.cssText = 'color: red; font-weight: bold;';
+      fileInput.value = ''; // reset file input
+    } else {
+      submissionMessage.textContent = ''; // clear previous error
+    }
+  });
+});
+
+
+
