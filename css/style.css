@@ -336,6 +336,12 @@ main {
     padding-top: 0; 
   }
 
+  section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+
   /* Hero section */
   .hero {
     position: relative;
