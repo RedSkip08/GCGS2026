@@ -204,6 +204,7 @@ header {
   /* Header adjustments */
   header {
     flex-wrap: wrap;
+    min-height: 105px;
     height: auto;
   }
 
@@ -333,7 +334,6 @@ main {
 }
 
 
-
 @media (max-width: 480px) {
   body {
     margin: 0;
@@ -341,28 +341,35 @@ main {
   }
 
   main {
-  margin-top: 0;
-  padding-top: -50px;
-}
+    margin-top: 0;
+    /* ⚠️ padding-top: -50px; was invalid — negative padding doesn’t exist */
+  }
 
   .hero {
-    margin-top: -5rem;
+    position: relative;
+    margin-top: -5rem; /* pulls the whole hero up */
     padding-top: 0;
     text-align: center;
   }
 
-  .hero h1 {
-    font-size: 1.5rem;     
-    line-height: 1;      
-    white-space: normal;   
-    margin-bottom: 0.5rem;
+  /* Combined hero + main specific tweaks */
+  main .hero {
     margin-top: -3rem;
   }
 
-  #hero-heading {
-  font-size: 1rem;
-}
+  main .hero h1,
+  .hero h1 {
+    font-size: 1.5rem;
+    line-height: 1;
+    white-space: normal;
+    word-break: break-word;
+    margin-bottom: 0.5rem;
+    margin-top: -3rem; 
+  }
 
+  #hero-heading {
+    font-size: 1rem; 
+  }
 
   .hero h2 {
     font-size: 0.8rem;
@@ -370,21 +377,20 @@ main {
     margin-top: 1rem;
   }
 
-  /* Conference details h3 */
   .conference-details h3 {
-    font-size: 1rem;    
+    font-size: 1rem;
     line-height: 1.2;
-    margin-bottom: 0.5rem;
-    white-space: normal;  
     margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    white-space: normal;
   }
 
   .conference-details p {
-  font-size: 1rem;
-  margin-top: 1rem;
+    font-size: 1rem;
+    margin-top: 1rem;
   }
-  
 }
+
 
 
 /* Intro */
