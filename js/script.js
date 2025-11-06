@@ -74,22 +74,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('abstractFile');
   const submissionMessage = document.getElementById('submissionMessage');
 
+  if (!form || !fileInput || !submissionMessage) {
+    console.error('Form or file input or message container not found!');
+    return;
+  }
+
   form.addEventListener('submit', (e) => {
     const file = fileInput.files[0];
-
     if (!file) return; // no file selected
 
     const maxSize = 1 * 1024 * 1024; // 1MB in bytes
+
     if (file.size > maxSize) {
       e.preventDefault(); // stop form submission
       submissionMessage.textContent = `Error: File "${file.name}" exceeds 1MB limit!`;
       submissionMessage.style.cssText = 'color: red; font-weight: bold;';
-      fileInput.value = ''; // reset file input
+      fileInput.value = ''; // clear input
     } else {
       submissionMessage.textContent = ''; // clear previous error
     }
   });
 });
+
 
 
 
