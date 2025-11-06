@@ -345,7 +345,7 @@ main {
   }
 
   /* Hero h1 heading */
-  .hero h1 #hero-heading {
+  .hero h1#hero-heading {
     font-size: 0.8rem;       
     line-height: 1.1;      
     margin-top: -1rem; 
