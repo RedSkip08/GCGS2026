@@ -324,7 +324,7 @@ main {
 
 @media (max-width: 480px) {
   main .hero {
-    margin-top: -5rem; /* pull hero section upward */
+    margin-top: -3rem; /* pull hero section upward */
   }
 
   main .hero h1 {
