@@ -332,6 +332,29 @@ main {
     color: #555;
 }
 
+@media (max-width: 700px) {
+  .hero {
+    margin-top: -5rem;   
+    padding-top: 1rem;  
+    padding-bottom: 0.8rem; 
+  }
+
+  .hero h1 {
+    font-size: 2rem;   
+    margin-bottom: 0.3rem; 
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;  
+    margin-bottom: 0.3rem; 
+  }
+
+  .conference-details {
+    margin-top: -0.5rem;
+  }
+}
+
+
 /* Intro */
 .intro {
     text-align: center;
@@ -394,10 +417,7 @@ main {
     }
     .highlight {
         flex: 1 1 100%;
-    }
-    .hero{
-      margin-top: -5rem;
-    }
+
 }
 
 
