@@ -204,7 +204,7 @@ header {
   /* Header adjustments */
   header {
     flex-wrap: wrap;
-    min-height: 80px;
+    min-height: 60px;
     height: auto;
   }
 
@@ -325,7 +325,7 @@ main {
 
 @media (max-width: 480px) {
   main .hero {
-    margin-top: -3rem; /* pull hero section upward */
+    margin-top: -5rem; /* pull hero section upward */
   }
 
   main .hero h1 {
