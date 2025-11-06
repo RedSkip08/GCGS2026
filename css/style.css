@@ -339,13 +339,13 @@ main {
   /* Hero section */
   .hero {
     position: relative;
-    margin-top: -2rem; 
+    margin-top: -1rem; 
     padding-top: 0;
     text-align: center;
   }
 
   /* Hero h1 heading */
-  #hero-heading {
+  .hero h1 #hero-heading {
     font-size: 0.8rem;       
     line-height: 1.1;      
     margin-top: -1rem; 
@@ -356,9 +356,9 @@ main {
 
   /* h1 */
   .hero h1 {
-    font-size: 1rem;
+    font-size: 1.5rem;
     line-height: 1.2;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
   }
 
   /* Optional h2 */
@@ -369,7 +369,7 @@ main {
   }
 
   /* Conference details */
-  .conference-details h3 {
+  .conference-details h3 .highlight-text {
     font-size: 0.8rem;     
     line-height: 1.1;
     margin-top: 0.5rem;         
