@@ -332,6 +332,24 @@ main {
     color: #555;
 }
 
+@media (max-width: 768px) {
+  .hero {
+    margin-top: -2rem;  /* adjust upward; smaller negative value than desktop */
+    padding: 1.5rem 1rem; /* optional: reduce padding for smaller screen */
+  }
+
+  .hero h1 {
+    font-size: 2rem;    /* smaller font for mobile */
+    margin-bottom: 0.3rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+  }
+}
+
+
 /* Intro */
 .intro {
     text-align: center;
