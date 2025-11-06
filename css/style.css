@@ -344,7 +344,7 @@ main {
 
   .hero {
     position: relative;
-    margin-top: -30px; /* negative pulls up */
+    margin-top: -200px; /* negative pulls up */
     padding: 1rem 1rem;
     text-align: center;
   }
