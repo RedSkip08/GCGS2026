@@ -204,7 +204,7 @@ header {
   /* Header adjustments */
   header {
     flex-wrap: wrap;
-    min-height: 105px;
+    min-height: 80px;
     height: auto;
   }
 
@@ -368,7 +368,10 @@ main {
   }
 
   #hero-heading {
-    font-size: 1rem; 
+    font-size: 1rem;        
+    line-height: 1.1;       
+    margin-top: 0;           
+    margin-bottom: 0.3rem;
   }
 
   .hero h2 {
@@ -378,11 +381,10 @@ main {
   }
 
   .conference-details h3 {
-    font-size: 1rem;
-    line-height: 1.2;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    white-space: normal;
+    font-size: 0.9rem;     
+    line-height: 1.1;
+    margin-top: 0;         
+    margin-bottom: 0.3rem;
   }
 
   .conference-details p {
