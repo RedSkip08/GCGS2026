@@ -346,7 +346,7 @@ main {
 
   /* Hero h1 heading */
   .hero h1#hero-heading {
-    font-size: 0.8rem;       
+    font-size: 1.2rem;       
     line-height: 1.1;      
     margin-top: -1rem; 
     margin-bottom: 0.3rem;
@@ -368,10 +368,7 @@ main {
     margin-top: 0.5rem;
   }
 
-  /* Conference details */
-  .conference-details h3 .highlight-text {
-    font-size: 1rem;
-  }
+
 
   .conference-details p {
     font-size: 0.8rem;
