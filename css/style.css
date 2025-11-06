@@ -334,17 +334,18 @@ main {
 
 @media (max-width: 768px) {
   .hero {
-    margin-top: -2rem;  /* adjust upward; smaller negative value than desktop */
-    padding: 1.5rem 1rem; /* optional: reduce padding for smaller screen */
+    margin-top: -5rem;
+    padding: 1.5rem 1rem;
   }
 
   .hero h1 {
-    font-size: 2rem;    /* smaller font for mobile */
+    font-size: 0.5rem;    /* smaller font for mobile */
     margin-bottom: 0.3rem;
   }
 
   .hero h2 {
     font-size: 1.2rem;
+    margin-top: 0;
     margin-bottom: 0.2rem;
   }
 }
