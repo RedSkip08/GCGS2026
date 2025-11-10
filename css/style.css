@@ -1390,18 +1390,34 @@ main {
 .welcome {
   margin-top: 2rem;
   position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
   width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  overflow: hidden;             
-  max-height: 400px;            
+  overflow: hidden;
+  max-height: 400px;
 }
 
 .welcome img {
   width: 100%;
   height: 100%;
-  object-fit: cover;            
+  object-fit: cover;
   display: block;
 }
+
+/* Mobile fix */
+@media (max-width: 768px) {
+  .welcome {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+  }
+}
+
 
 .timeline {
   position: relative;
