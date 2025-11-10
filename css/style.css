@@ -345,12 +345,17 @@ main {
 
 
   /* Hero section */
-  .hero {
-    position: relative;
-    margin-top: -1rem; 
-    padding-top: 0;
-    text-align: center;
-  }
+.hero {
+  position: relative;
+  margin-top: -1rem;
+  padding-top: 0;
+  text-align: center;
+  transform: translateZ(0); /* fixes Safari subpixel shift */
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
 
   /* Hero h1 heading */
   .hero h1#hero-heading {
