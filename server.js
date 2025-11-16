@@ -9,6 +9,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const session = require("express-session");
+const connectRedis = require("connect-redis");
+const { createClient } = require("redis");
 const { Resend } = require("resend");
 const mime = require("mime-types");
 
@@ -33,19 +35,31 @@ app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // --- Session setup ---
-app.set("trust proxy", 1); // required for HTTPS proxies
+app.set("trust proxy", 1); 
+
+app.set("trust proxy", 1);
+
+const RedisStore = connectRedis(session);
+const redisClient = createClient({
+  url: process.env.REDIS_URL,
+});
+
+redisClient.connect().catch(console.error);
+
 app.use(
   session({
+    store: new RedisStore({ client: redisClient }),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // false for local testing, true on Render HTTPS
+      secure: process.env.NODE_ENV === "production", 
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      maxAge: 1000 * 60 * 60 * 24, 
     },
   })
 );
+
 
 // --- Parse form data ---
 app.use(express.urlencoded({ extended: true }));
