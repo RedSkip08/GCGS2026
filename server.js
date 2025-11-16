@@ -39,7 +39,7 @@ app.set("trust proxy", 1);
 
 app.set("trust proxy", 1);
 
-const RedisStore = connectRedis.default(session);
+const RedisStore = connectRedis(session);
 const redisClient = createClient({
   url: process.env.REDIS_URL,
 });
