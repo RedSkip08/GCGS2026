@@ -10,7 +10,7 @@ const path = require("path");
 const fs = require("fs");
 const session = require("express-session");
 const connectRedis = require("connect-redis");
-const { createClient } = require("redis");
+const Redis = require("ioredis");
 const { Resend } = require("resend");
 const mime = require("mime-types");
 
@@ -40,11 +40,7 @@ app.set("trust proxy", 1);
 app.set("trust proxy", 1);
 
 const RedisStore = connectRedis(session);
-const redisClient = createClient({
-  url: process.env.REDIS_URL,
-});
-
-redisClient.connect().catch(console.error);
+const redisClient = new Redis(process.env.REDIS_URL);
 
 app.use(
   session({
