@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registration</title>
 <link rel="stylesheet" href="/css/style.css">
-<script src="/js/script.js" defer></script>
+<script src="/js/regis.js" defer></script>
 </head>
 <body>
 
@@ -65,19 +65,68 @@
   
 </header>
 
-
-
 <main>
-    <section class="hero">
-        <h1>Registration</h1>
-        <p>Details coming soon...</p>
-    </section>
+  <section class="hero">
+    <h1 id="hero-heading">GCGS 2026 Registration Form</h1>
+  </section>
 
-    <section class="intro">
-        <h2></h2>
-        <p></p>
-    </section>
+  <section class="abstract-submission">
+    <h1>Please register here!</h1>
+    <p>Welcome to the GCGS 2026 registration portal. Please provide your details using the form below.</p>
+    <section class="registration-section">
+    <form id="regForm">
+      <div class="form-card">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your full name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="attend">Do you plan to attend the conference?</label>
+          <select id="attend" name="attend" required>
+            <option value="">Select...</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="no">Maybe</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="abstract">Do you plan to submit an abstract?</label>
+          <select id="abstract" name="abstract" required>
+            <option value="">Select...</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="no">Maybe</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="affliation">Affiliation</label>
+          <input type="text" id="affliation" name="affliation" placeholder="Name of your institution" required />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message (optional)</label>
+          <textarea id="message" name="message" rows="4" placeholder="Any comments or questions"></textarea>
+        </div>
+
+        <button type="submit">Register</button>
+
+        <div class="success" id="successBox">Your registration was sent successfully!</div>
+        <div class="error" id="errorBox">There was an error sending your registration.</div>
+      </div>
+    </form>
+  </section>
+  </section>
+
 </main>
+
 
 <footer>
 

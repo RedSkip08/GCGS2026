@@ -13,6 +13,7 @@ const connectRedis = require("connect-redis");
 const Redis = require("ioredis");
 const { Resend } = require("resend");
 const mime = require("mime-types");
+const cors = require("cors");
 
 // --- Use environment variables ---
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -25,7 +26,6 @@ console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY ? "Loaded ✅" : "Miss
 console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "Loaded ✅" : "Missing ⚠️");
 console.log("Render environment RESEND_API_KEY:", !!process.env.RESEND_API_KEY);
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -35,8 +35,6 @@ app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // --- Session setup ---
-app.set("trust proxy", 1); 
-
 app.set("trust proxy", 1);
 
 const RedisStore = connectRedis(session);
@@ -49,13 +47,12 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", 
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, 
+      maxAge: 1000 * 60 * 60 * 24,
     },
   })
 );
-
 
 // --- Parse form data ---
 app.use(express.urlencoded({ extended: true }));
@@ -105,6 +102,7 @@ function sanitizeFilename(filename) {
   return filename.replace(/[^a-zA-Z0-9.\-_]/g, "_");
 }
 
+// --- ABSTRACT UPLOAD ROUTE (your existing one) ---
 app.post("/upload-abstract", upload.single("abstractFile"), async (req, res) => {
   const { firstName, middleName, lastName, affiliation, degreeProgram, paperTitle, keyword, email } = req.body;
   if (!req.file) return res.status(400).send("No file uploaded.");
@@ -167,6 +165,37 @@ Submitted On: ${timestamp}
   fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
 
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
+});
+
+// --- NEW: REGISTRATION FORM EMAIL ROUTE ---
+app.post("/register", async (req, res) => {
+  try {
+    const { name, email, attend, abstract, affliation, message } = req.body;
+
+    const content = `
+New Registration for GCGS 2026:
+
+Name: ${name}
+Email: ${email}
+Plans to attend: ${attend}
+Plans to submit an abstract: ${abstract}
+Affiliation: ${affliation}
+Message: ${message || "No message provided"}
+    `.trim();
+
+    await resend.emails.send({
+      from: "registration@gcgs.info",
+      to: "utpalpandey20@gmail.com",
+      subject: "New GCGS 2026 Registration",
+      text: content,
+    });
+
+    console.log("📩 Registration email sent");
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("❌ Registration email failed:", err);
+    res.status(500).json({ success: false });
+  }
 });
 
 // --- Login ---

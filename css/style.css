@@ -1602,3 +1602,110 @@ main {
   font-size: 0.95rem;
 }
 
+/* registration form */
+
+/* Paragraph inside registration */
+
+.registration-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* centers children horizontally */
+  justify-content: flex-start;
+  padding: 1rem 1rem;
+  text-align: center;
+}
+
+/* Make the form a flex container so its child (.form-card) can be centered */
+#regForm {
+  display: flex;
+  justify-content: center; /* centers .form-card horizontally */
+  width: 100%;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  border-radius: 12px;
+  border: 3px solid var(--ut-orange);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+}
+
+/* ====== Form Groups ====== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* ====== Inputs, Selects, Textareas ====== */
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #0056d4;
+  box-shadow: 0 0 0 2px rgba(0,86,212,0.2);
+  outline: none;
+}
+
+/* ====== Button ====== */
+button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #0056d4;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #003a9e;
+}
+
+/* ====== Success & Error Messages ====== */
+.success, .error {
+  font-weight: 600;
+  margin-top: 1rem;
+  display: none;
+  text-align: center;
+}
+
+.success { color: green; }
+.error { color: red; }
+
+/* ====== Responsive ====== */
+@media (max-width: 600px) {
+  .form-card {
+    padding: 1.5rem;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .registration-section p {
+    font-size: 0.95rem;
+  }
+}
