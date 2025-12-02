@@ -1692,7 +1692,7 @@ button:hover {
   text-align: center;
 }
 
-.success { color: green; }
+.success { color: var(--ut-orange); }
 .error { color: red; }
 
 /* ====== Responsive ====== */
