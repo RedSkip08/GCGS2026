@@ -1709,3 +1709,18 @@ button:hover {
     font-size: 0.95rem;
   }
 }
+
+.timeline-date {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-date .old-date {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.timeline-date .new-date {
+  font-weight: 600;
+  color: #000;
+}
