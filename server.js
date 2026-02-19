@@ -81,6 +81,31 @@ const upload = multer({
   },
 });
 
+// disable submission-related pages
+app.get(
+  [
+    "/abstractsubmission",
+    "/abstractsubmission/",
+    "/submissioncomplete",
+    "/submissioncomplete/"
+  ],
+  (req, res) => {
+    return res.status(410).send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Submissions Closed</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; text-align:center; margin-top:100px;">
+          <h1>Thank you for your interest in GCGS 2026</h1>
+          <p>We are not accepting new abstracts anymore.</p>
+        </body>
+      </html>
+    `);
+  }
+);
+
 // --- HTML routes ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "index.html")));
