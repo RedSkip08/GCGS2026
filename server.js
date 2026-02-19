@@ -194,16 +194,15 @@ Submitted On: ${timestamp}
 // --- NEW: REGISTRATION FORM EMAIL ROUTE ---
 app.post("/register", async (req, res) => {
   try {
-    const { name, email, attend, abstract, affliation, message } = req.body;
+    const { name, email, abstract, affiliation, message } = req.body;
 
     const content = `
 New Registration for GCGS 2026:
 
 Name: ${name}
 Email: ${email}
-Plans to attend: ${attend}
 Presenting: ${abstract}
-Affiliation: ${affliation}
+Affiliation: ${affiliation}
 Message: ${message || "No message provided"}
     `.trim();
 
@@ -215,12 +214,11 @@ Message: ${message || "No message provided"}
     });
 
     console.log("📩 Registration email sent");
-    return res.status(200).json({ success: true, redirectTo: "/registrationcomplete" });
+    return res.redirect("/registrationcomplete");
   } catch (err) {
     console.error("❌ Registration email failed:", err);
-    return res.status(500).json({ success: false });
+    return res.status(500).send("Registration failed. Please try again later.");
   }
-
 });
 
 // --- Login ---
