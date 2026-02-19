@@ -85,9 +85,7 @@ const upload = multer({
 app.get(
   [
     "/abstractsubmission",
-    "/abstractsubmission/",
-    "/submissioncomplete",
-    "/submissioncomplete/"
+    "/abstractsubmission/"
   ],
   (req, res) => {
     return res.status(410).send(`
@@ -112,8 +110,9 @@ app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "login", "inde
 app.get("/abstractsubmission", (req, res) =>
   res.sendFile(path.join(__dirname, "abstractsubmission", "index.html"))
 );
-app.get("/submissioncomplete", (req, res) =>
-  res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"))
+
+app.get("/registrationcomplete", (req, res) =>
+  res.sendFile(path.join(__dirname, "registrationcomplete", "index.html"))
 );
 
 // Files page (requires login)
@@ -203,7 +202,7 @@ New Registration for GCGS 2026:
 Name: ${name}
 Email: ${email}
 Plans to attend: ${attend}
-Plans to submit an abstract: ${abstract}
+Presenting: ${abstract}
 Affiliation: ${affliation}
 Message: ${message || "No message provided"}
     `.trim();
@@ -216,11 +215,12 @@ Message: ${message || "No message provided"}
     });
 
     console.log("📩 Registration email sent");
-    res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, redirectTo: "/registrationcomplete" });
   } catch (err) {
     console.error("❌ Registration email failed:", err);
-    res.status(500).json({ success: false });
+    return res.status(500).json({ success: false });
   }
+
 });
 
 // --- Login ---
