@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // ==== active link ====
 document.addEventListener("DOMContentLoaded", () => {
-  const currentPath = window.location.pathname.replace(/^\/|\/$/g, ""); // remove leading/trailing slashes
+  const currentPath = window.location.pathname.replace(/^\/|\/$/g, ""); 
   const links = document.querySelectorAll("#nav-menu a");
 
   links.forEach(link => {
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submissionMessage.style.cssText = 'color: red; font-weight: bold;';
       fileInput.value = ''; // clear input
     } else {
-      submissionMessage.textContent = ''; // clear previous error
+      submissionMessage.textContent = ''; 
     }
   });
 });
