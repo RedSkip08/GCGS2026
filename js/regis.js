@@ -1,37 +1,43 @@
-const form = document.getElementById("regForm");
-const successBox = document.getElementById("successBox");
-const errorBox = document.getElementById("errorBox");
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("regForm");
+  const errorBox = document.getElementById("errorBox");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  if (!form) return;
 
-  successBox.style.display = "none";
-  errorBox.style.display = "none";
+  // Hiding error box
+  if (errorBox) errorBox.style.display = "none";
 
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    attend: document.getElementById("attend").value,
-    abstract: document.getElementById("abstract").value,
-    affliation: document.getElementById("affliation").value,
-    message: document.getElementById("message").value
-  };
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  try {
-    // relative URL for compatibility
-    const res = await fetch("/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    if (errorBox) errorBox.style.display = "none";
 
-    if (res.ok) {
-      successBox.style.display = "block";
-      form.reset();
-    } else {
-      errorBox.style.display = "block";
+    // Matching HTML IDs:
+    const data = {
+      name: document.getElementById("name")?.value?.trim() || "",
+      email: document.getElementById("email")?.value?.trim() || "",
+      abstract: document.getElementById("abstract")?.value || "",
+      affiliation: document.getElementById("affiliation")?.value?.trim() || "",
+      message: document.getElementById("message")?.value?.trim() || "",
+    };
+
+    try {
+      const res = await fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const payload = await res.json().catch(() => ({}));
+
+      if (res.ok && payload.success) {
+        window.location.assign(payload.redirectTo || "/registrationcomplete");
+        return;
+      }
+
+      if (errorBox) errorBox.style.display = "block";
+    } catch (err) {
+      if (errorBox) errorBox.style.display = "block";
     }
-  } catch (err) {
-    errorBox.style.display = "block";
-  }
+  });
 });
