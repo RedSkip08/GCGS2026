@@ -244,6 +244,19 @@ Message: ${message || "No message provided"}
   }
 });
 
+// disable login
+app.get(
+  [
+    "/login",
+    "/login/"
+  ],
+  (req, res) => {
+    return res.status(410).send(`
+
+    `);
+  }
+);
+
 // --- Login ---
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
