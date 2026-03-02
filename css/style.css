@@ -1309,21 +1309,21 @@ main {
 
 
 .conference-details {
-    margin-top: -2rem; /* pull upward slightly */
+    margin-top: -2rem; 
 }
 
 .hero {
-    padding-bottom: 1.5rem; /* adjust as needed */
+    padding-bottom: 1.5rem; 
 }
 
 .deadline {
     font-weight: bold;
-    color: red; /* or #c00 */
+    color: red; 
 }
 
 .topics-heading {
-    margin: 0;        /* remove extra spacing */
-    padding: 0; /* optional spacing */
+    margin: 0;        
+    padding: 0; 
 }
 
 .conference-details h3 {
@@ -1430,7 +1430,7 @@ main {
   position: relative;
   margin: 3rem auto;
   padding-left: 2rem;
-  border-left: 3px solid #ff7b00; /* main line color */
+  border-left: 3px solid #ff7b00; 
   max-width: 600px;
 }
 
@@ -1528,7 +1528,7 @@ main {
 }
 
 
-/* Responsive: stack columns on small screens */
+/* stack columns on small screens */
 @media (max-width: 700px) {
   .speaker-card {
     flex-direction: column;
@@ -1604,21 +1604,18 @@ main {
 
 /* registration form */
 
-/* Paragraph inside registration */
-
 .registration-section {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* centers children horizontally */
+  align-items: center; 
   justify-content: flex-start;
   padding: 1rem 1rem;
   text-align: center;
 }
 
-/* Make the form a flex container so its child (.form-card) can be centered */
 #regForm {
   display: flex;
-  justify-content: center; /* centers .form-card horizontally */
+  justify-content: center;
   width: 100%;
 }
 
@@ -1729,7 +1726,7 @@ button:hover {
     .wrap{
       max-width: 980px;
       margin: 0 auto;
-      padding: 2px 18px 56px;
+      padding: 2px 5px 5px;
     }
     
     .sub{
@@ -1871,7 +1868,7 @@ button:hover {
 @media (max-width: 760px){
 
   .wrap{
-    padding: 12px 14px 40px;
+    padding: 2px 5px 5px;
   }
 
   .session{
@@ -1954,7 +1951,7 @@ button:hover {
 @media (max-width: 480px){
 
   .wrap{
-    padding: 10px 12px 34px;
+    padding: 2px 5px 5px;
   }
 
   .session-header{
