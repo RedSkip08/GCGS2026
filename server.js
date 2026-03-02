@@ -33,6 +33,8 @@ const PORT = process.env.PORT || 3000;
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/images", express.static(path.join(__dirname, "images")));
+// Serve files
+app.use("/files", express.static(path.join(__dirname, "files")));
 
 // --- Session setup ---
 app.set("trust proxy", 1);
@@ -58,17 +60,7 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// --- pdf for download ---
 
-import express from "express";
-import path from "path";
-
-const app = express();
-const __dirname = path.resolve();
-
-app.use("/files", express.static(path.join(__dirname, "files")));
-
-app.listen(3000);
 
 // --- Ensure uploads folder exists ---
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
