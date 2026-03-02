@@ -58,6 +58,18 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// --- pdf for download ---
+
+import express from "express";
+import path from "path";
+
+const app = express();
+const __dirname = path.resolve();
+
+app.use("/files", express.static(path.join(__dirname, "files")));
+
+app.listen(3000);
+
 // --- Ensure uploads folder exists ---
 const UPLOADS_FOLDER = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
