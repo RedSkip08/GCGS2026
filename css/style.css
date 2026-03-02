@@ -1868,24 +1868,114 @@ button:hover {
     .type-social .chip{ background:#ecfccb; border-color:#d9f99d; color:#365314; }
 
 
-    @media (max-width: 760px){
-      .time{
-        padding-right: 0;
-      }
-      .time::after{
-        display:none;
-      }
-      .item > :nth-child(2){
-        padding-left: 0;
-      }
-    }
+@media (max-width: 760px){
 
-    @media (max-width: 760px){
-      .item{
-        grid-template-columns: 1fr;
-      }
-      .presenter{
-        text-align:left;
-        margin-top:6px;
-      }
-    }  
+  .wrap{
+    padding: 12px 14px 40px;
+  }
+
+  .session{
+    border-radius: 12px;
+  }
+
+  .session-header{
+    padding: 12px 14px;
+    gap: 6px;
+  }
+
+  .session-header h2{
+    font-size: 1rem;
+  }
+
+  .session-header .meta{
+    font-size: .9rem;
+    opacity: .95;
+  }
+
+  /* stack rows */
+  .item{
+    grid-template-columns: 1fr;
+    padding: 12px 14px;
+    align-items: start;
+  }
+
+  /* remove desktop column */
+  .item > .time,
+  .item > .main,
+  .item > .presenter{
+    padding: 0;
+  }
+
+  /* remove vertical dividers */
+  .item > .time,
+  .item > .main{
+    border-right: none;
+  }
+
+  /* remove desktop "nth-child(2)" */
+  .item > :nth-child(2){
+    padding-left: 0;
+  }
+
+  .time{
+    display: inline-block;
+    width: fit-content;
+    margin: 0 0 8px 0;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: #fff;
+    white-space: nowrap;
+    line-height: 1.1;
+
+    border-right: none;
+    margin-right: 0;
+    padding-right: 10px;
+  }
+
+  .title{
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .details{
+    font-size: .95rem;
+  }
+
+  .presenter{
+    text-align: left;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    font-size: .95rem;
+  }
+}
+
+@media (max-width: 480px){
+
+  .wrap{
+    padding: 10px 12px 34px;
+  }
+
+  .session-header{
+    padding: 10px 12px;
+  }
+
+  .item{
+    padding: 10px 12px;
+  }
+
+  .time{
+    font-size: .88rem;
+    padding: 4px 9px !important;
+  }
+
+  .title{
+    font-size: .98rem;
+  }
+
+  .details,
+  .presenter{
+    font-size: .93rem;
+  }
+}
