@@ -195,29 +195,6 @@ Submitted On: ${timestamp}
   res.sendFile(path.join(__dirname, "submissioncomplete", "index.html"));
 });
 
-// disable registration-related pages
-app.get(
-  [
-    "/registration",
-    "/registrationcomplete/"
-  ],
-  (req, res) => {
-    return res.status(410).send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Registration Closed</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; text-align:center; margin-top:100px;">
-          <h1>Thank you for your interest in GCGS 2026</h1>
-          <p>Registrations are closed now.</p>
-        </body>
-      </html>
-    `);
-  }
-);
-
 // --- NEW: REGISTRATION FORM EMAIL ROUTE ---
 app.post("/register", async (req, res) => {
   try {
