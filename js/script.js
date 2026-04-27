@@ -30,29 +30,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // ===== Load Submissions =====
-  const tbody = document.querySelector("#files-list");
-  if (!tbody) return;
-
-  try {
-    const response = await fetch("/api/submissions", { credentials: "same-origin" });
-    if (!response.ok) throw new Error("Failed to fetch submissions");
-
-    const submissions = await response.json();
-    tbody.innerHTML = ""; // clear table
-
-    submissions.forEach(sub => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><a href="/metadata/${sub.metadataFile}" target="_blank">Metadata</a></td>
-        <td><a href="/download/${sub.uploadedFile}" target="_blank">File</a></td>
-      `;
-      tbody.appendChild(row);
-    });
-  } catch (err) {
-    console.error(err);
-    tbody.innerHTML = `<tr><td colspan="2">Failed to load submissions. Are you logged in?</td></tr>`;
-  }
 });
 
 // ==== active link ====
